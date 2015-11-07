@@ -31,8 +31,8 @@ if (elements.isEmpty()) {
 
 And here the question arises: what is the base case? Should I return `true` or `false`?
 
-Start with the implied invariant condition (contract) of the abovementioned method, i.e. if the method returns true for a given collection, then removing an element from this collection should not change the result.
+Start with the implied contract of the abovementioned method, i.e. if the method returns true for a given collection, then removing an element from this collection should not change the result.
 Indeed, if `same(Lists.of(a, b, c))` returns true, then `same(Lists.of(a, b))` should also return true, and by continuation `same(Collections.emptyList())` should also return true. Why is that important?
 Because a logically sound API is easier to work with.
 
-Long story short: think about your method's contracts. This kind of contracts usually make a great addition to method's documentation and provide you with a multutude of scenarions that you can cover in your unit tests.
+Long story short: think about your method's contracts. This kind of contracts usually makes a great addition to method's documentation and provide you with a multutude of scenarions to be covered with unit tests.
