@@ -4,27 +4,21 @@ title: About
 ---
 
 <p class="message">
-  Let's see if I can live with this
+  Worldly wisdom teaches that it is better for reputation to fail conventionally than to succeed unconventionally.
 </p>
 
-In the novel, *The Strange Case of Dr. Jeykll and Mr. Hyde*, Mr. Poole is Dr. Jekyll's virtuous and loyal butler. Similarly, Poole is an upstanding and effective butler that helps you build Jekyll themes. It's made by [@mdo](https://twitter.com/mdo).
+I kind of like this quote by Keynes. It makes me sound sophisticated.
 
-There are currently two themes built on Poole:
+If you need to know more about me, here are three websites that I try to keep up-to-date
 
-* [Hyde](http://hyde.getpoole.com)
-* [Lanyon](http://lanyon.getpoole.com)
+* [My linked.in profile](https://www.linkedin.com/in/vasilykartashov)
+* [My GitHub account](https://github.com/vasily-kartashov/)
+* [Mein XING Profil](https://www.xing.com/profile/Vasily_Kartashov)
 
-Learn more and contribute on [GitHub](https://github.com/poole).
+## Important
 
-## Setup
+I try to be professional and useful of this website, still it's nothing more than a programmer's notebook for my own amusement.
 
-Some fun facts about the setup of this project include:
-
-* Built for [Jekyll](http://jekyllrb.com)
-* Developed on GitHub and hosted for free on [GitHub Pages](https://pages.github.com)
-* Coded with [Sublime Text 2](http://sublimetext.com), an amazing code editor
-* Designed and developed while listening to music like [Blood Bros Trilogy](https://soundcloud.com/maddecent/sets/blood-bros-series)
-
-Have questions or suggestions? Feel free to [open an issue on GitHub](https://github.com/poole/issues/new) or [ask me on Twitter](https://twitter.com/mdo).
+If you need to drop me a line try info@kartashov.com
 
 Thanks for reading!
