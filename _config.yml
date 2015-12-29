@@ -17,7 +17,7 @@ author:
   name:           'Vasily Kartashov'
   url:            https://twitter.com/__kartashov
 
-paginate:         5
+paginate:         10
 
 # Custom vars
 version:          2.1.0

@@ -3,10 +3,9 @@ layout: post
 title: Simple twitter bot in Perl
 ---
 
-I like learning foreign languages, and tought that it would be a good idea to write a simple twitter bot that would regularly post a foreign word with an English translation.
-As much as I like the hot tech (not sure what's hot anymore though, is it still Rust or did we move on already?), there's nothing that can beat	the raw power of good old perl.
+Let's write a simple twitter bot that publishes flash cards containing an Indonesian (because why not, they're neighbours) and an English word. And let's do that once an hour.
 
-First thing first download the list of top words for your language of interest, for example from here: http://www.101languages.net/indonesian/most-common-indonesian-words/ (@todo add exact link)
+First thing first download the list of the most used words, for example from [101languages](http://www.101languages.net/indonesian/most-common-indonesian-words/).
 The file should look like following
 
     itu     it
@@ -17,7 +16,7 @@ The file should look like following
     anda    you
     ada     exist
 
-Next register a twitter app (@TODO write how to do it with a couple of screenshots)
+Next register a twitter app, starting [here](https://apps.twitter.com/). The complete code of the bot is just few lines of Perl.
 
 {% highlight perl %}
 #!/usr/bin/env perl
@@ -44,4 +43,4 @@ my $nt = Net::Twitter->new(
 my $result = $nt->update($message . ' #Indonesian');
 {% endhighlight %}
 
-...
+There are really few things that can beat Perl for this kind of hacking.
