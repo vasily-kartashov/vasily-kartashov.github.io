@@ -27,6 +27,8 @@ CREATE TABLE sensors (
     config jsonb NOT NULL
 );
 
+CREATE INDEX config_gin ON sensor USING gin(config);
+
 INSERT INTO sensors (id, type, config)
      VALUES (1, 'soil-moisture',    '{ "alpha": 0.543, "beta": -2.312, "enabled": true }'),
             (2, 'soil-temperature', '{ "enabled": true, "depth": 0.24 }'),
