@@ -48,25 +48,10 @@ public class Device {
     @Column(name = "id")
     private String id;
 
-    @Type(type = "org.hibernate.spatial.GeometryType")
-    @Column(name = "location", nullable = false)
-    private Geometry location;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public Geometry getLocation() {
-        return location;
-    }
-
-    public void setLocation(Geometry location) {
-        this.location = location;
-    }
+    @Column(name = "location", nullable = false, columnDefinition = "geometry(Point,4326)")
+    private Point location;
+ 
+    ...
 }
 {% endhighlight %}
 
@@ -76,8 +61,8 @@ The hibernate dialect exposes PostGIS functions to JPQL and lets us to send quer
 {% highlight java %}
 public interface DeviceRepository extends CrudRepository<Device, String> {
 
-    @Query("SELECT d FROM Device AS d WHERE within(d.location, :location) = TRUE")
-    List<Device> findWithinPolygon(@Param("location") Geometry location);
+    @Query("SELECT d FROM Device AS d WHERE within(d.location, :polygon) = TRUE")
+    List<Device> findWithinPolygon(@Param("polygon") Polygon polygon);
 }
 {% endhighlight %}
 
