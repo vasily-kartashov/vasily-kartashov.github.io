@@ -35,4 +35,4 @@ Start with the implied contract of the abovementioned method, i.e. if the method
 Indeed, if `same(Lists.of(a, b, c))` returns true, then `same(Lists.of(a, b))` should also return true, and by continuation `same(Collections.emptyList())` should also return true. Why is that important?
 Because a logically sound API is easier to work with.
 
-Long story short: think about your method's contracts. This kind of contracts usually makes a great addition to method's documentation and provide you with a multutude of scenarions to be covered with unit tests.
+Method contracts usually make a great addition to documentation and provide you with a multutude of scenarions to be covered with unit tests.

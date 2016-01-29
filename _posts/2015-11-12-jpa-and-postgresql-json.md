@@ -65,7 +65,7 @@ The converter that would convert between database data and the domain Status obj
 
 {% highlight java %}
 @Converter
-public class ConfigConverter implements <Config, String> {
+public class ConfigConverter implements AttributeConverter<Config, String> {
 
    private final ObjectMapper mapper = new ObjectMapper();
 

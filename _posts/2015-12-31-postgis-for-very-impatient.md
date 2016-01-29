@@ -27,7 +27,7 @@ Now we have a connection string and can use `pgcli` to access the database, whic
 
     pgcli -h 172.17.0.2 -U postgres
 
-Let's create a simple spring boot project to play around with queries. The source can be found here: @todo.
+Let's create a simple spring boot project to play around with queries. The source can be found on [GitHub](https://github.com/vasily-kartashov/postgis-spring-data-jpa-example)
 
 Initliaze the application
 
