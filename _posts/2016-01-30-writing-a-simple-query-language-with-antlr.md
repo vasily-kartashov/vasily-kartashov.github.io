@@ -188,7 +188,9 @@ public class QueryVisitor extends QueryBaseVisitor<String> {
     }
 
     public String visitReference(QueryParser.ReferenceContext ctx, Class<?> type) {
-        List<String> elements = ctx.element().stream().map(this::visitElement).collect(Collectors.toList());
+        List<String> elements = ctx.element().stream()
+	        .map(this::visitElement)
+                .collect(Collectors.toList());
         String base = "d." + elements.get(0);
         if (elements.size() == 1) {
             return base;
@@ -284,4 +286,5 @@ List<Device> devices = searchService
         .search("location within 10 km from (-37.814, 144.963) and status.stateOfCharge < 10%");
 {% endhighlight %}
 
-Rather neat.
+Rather neat. You can see the complete source code on [GitHub](https://github.com/vasily-kartashov/postgis-spring-data-jpa-example/commit/279b69d80783ad437018f1a689a6c6a620fbce9a)
+
