@@ -11,7 +11,7 @@ Let's say we have a complex database of IoT devices and we want to enable a simp
 
 Although it might sound intimidatingly complex task, the fact is it's rather simple to achive with ANTLR. Let's begin with the query language. The following grammar will do for now.
 
-{% highlight text %}
+{% highlight antlr %}
 grammar Query;
 
 @header {
