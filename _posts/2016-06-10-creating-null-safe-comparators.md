@@ -13,13 +13,11 @@ properties are not set we want to move users to the end of the list.
 You also may want to ignore case when comparing cities. Here's an
 example of a simple result set in a tabulated form
 
-```
-| Brisbane  | 4000 | Burke     | Jason   |
-| Brisbane  | null | Appleseed | Frank   |
-| melbourne | 3001 | Collins   | Lindon  |
-| Melbourne | 3003 | Collins   | Grant   |
-| null      | 1000 | null      | Matthew |
-```
+    | Brisbane  | 4000 | Burke     | Jason   |
+    | Brisbane  | null | Appleseed | Frank   |
+    | melbourne | 3001 | Collins   | Lindon  |
+    | Melbourne | 3003 | Collins   | Grant   |
+    | null      | 1000 | null      | Matthew |
 
 And the corresponding `User` class might look like following
 
@@ -36,13 +34,11 @@ Now it's not that's unbearably complex task or anything, or that we don't know
 how to do that. It's the fact that composing multiple comparators together can
 be easily generalized. Here's the pseudo-code of this wonderful algorithm
 
-```
     for (comparator : comparators):
         result = comparator.compare(a, b)
         if (result != 0):
             return result
         return 0
-```        
 
 Now given all the flexibility of Java 8 we can create a generic `ComparatorBuilder`
 that would help us to simplify this daunting task, especially around `null` checks
