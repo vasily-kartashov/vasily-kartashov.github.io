@@ -28,15 +28,15 @@ A more sensible approach that was to store the status data in the same table as 
 
 The great news about this solution is that if you do that in PostgreSQL and declare the type of the STATUS field to be `json` or even better `jsonb`, then the status data is stored not as a string but as a structured binary data, and you can use this structure in your SQL queries. For example it's now possible to quickly find all unhealthy sensors
 
-{% highlight sql %}
+```sql
 SELECT sensor_id
   FROM sensors
  WHERE (sensor_status->>'healthy')::boolean = false;
-{% endhighlight %}
+```
 
 Now we have structured data in the database, and SQL queries. Can we also keep this structure in the application logic? For that we can use converters that would do the heavy ugly lifting for us. Let's start by creating the Status class. We will be using Jackson for JSON handling, and these are the annotations that we need to help Jackson to see through.
 
-{% highlight java %}
+```java
 public class Status {
 
    private final Map<String, String> properties = new HashMap<>();
@@ -59,11 +59,11 @@ public class Status {
        }
    }
 }
-{% endhighlight %}
+```
 
 The converter that would convert between database data and the domain Status object contains quite a bit of boilerplate.
 
-{% highlight java %}
+```java
 @Converter
 public class ConfigConverter implements AttributeConverter<Config, String> {
 
@@ -90,11 +90,11 @@ public class ConfigConverter implements AttributeConverter<Config, String> {
       }
    }
 }
-{% endhighlight %}
+```
 
 The last thing you should do is to add a converter to your entity class to explain your JPA implementation how to convert between the database data and your domain model and back
 
-{% highlight java %}
+```java
 @Entity
 @Table(name = "sensors")
 public class Sensor {
@@ -113,6 +113,6 @@ public class Sensor {
 
     ...
 }
-{% endhighlight %}
+```
 
 One tiny note. You will need to use `pgjdbc-ng` driver for this. At least this is the only one that worked for me.

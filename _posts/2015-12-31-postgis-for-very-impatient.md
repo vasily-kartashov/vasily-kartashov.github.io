@@ -14,10 +14,11 @@ Login to the `psql` console
     sudo docker exec -it postgis psql -U postgres
 
 and in the prompt execute the following command to check the version of the PostgreSQL / PostGIS
-{% highlight sql %}
+
+```sql
 SELECT version();
 SELECT postgis_full_version();
-{% endhighlight %}
+```
 
 Docker runs in the container so you'll need the IP address if you want to access PostgeSQL running in the container
 
@@ -39,7 +40,8 @@ Initliaze the application
     spring.datasource.driver-class-name = org.postgresql.Driver
 
 The device entity pretty much just concerns with the location of the device
-{% highlight java %}
+
+```java
 @Entity
 @Table(name = "devices")
 public class Device {
@@ -50,28 +52,30 @@ public class Device {
 
     @Column(name = "location", nullable = false, columnDefinition = "geometry(Point,4326)")
     private Point location;
- 
+
     ...
 }
-{% endhighlight %}
+```
 
 Important is to define the custom type for the location attribute. This way Hibernate links Java geometry types and the SQL geometry type (??? is it true ???)
 
 The hibernate dialect exposes PostGIS functions to JPQL and lets us to send queries like following
-{% highlight java %}
+
+```java
 public interface DeviceRepository extends CrudRepository<Device, String> {
 
     @Query("SELECT d FROM Device AS d WHERE within(d.location, :polygon) = TRUE")
     List<Device> findWithinPolygon(@Param("polygon") Polygon polygon);
 }
-{% endhighlight %}
+```
 
 You can take a pick at the class `org.hibernate.spatial.dialect.postgis.PostgisDialect` to see what functions are available on JPQL side and how they map to PostGIS functions
 
 ... - todo list them all?
 
 Now we can test the search functionality
-{% highlight java %}
+
+```java
 Device device = new Device();
 device.setId("de-001");
 Point point = (Point) new WKTReader().read("POINT(5 5)");
@@ -82,7 +86,7 @@ Polygon polygon = (Polygon) new WKTReader().read("POLYGON((0 0,0 10,10 10,10 0,0
 List<Device> devices = deviceRepository.findWithinPolygon(polygon);
 
 System.out.println(devices);
-{% endhighlight %}
+```
 
 @todo extend with other functions
 @todo proper GIS data types

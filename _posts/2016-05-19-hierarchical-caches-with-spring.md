@@ -14,18 +14,18 @@ and similar.
 So the first thing first you create a simple class, let's call it `Database`,
 that loads a time series for you
 
-{% highlight java %}
+```java
 public class Database {
     public double[] load(String series) {
         ... // horribly expensive database access goes here
     }
 }
-{% endhighlight %}
+```
 
 Over the time series returned by the database we would like to run a sum, thus
 producing an integral like following
 
-{% highlight java %}
+```java
 public class Integrator {
 
     private Database database;
@@ -41,7 +41,7 @@ public class Integrator {
         return result;
     }
 }
-{% endhighlight %}
+```
 
 Now there are huge problems with this design. Imagine we add one more data
 point to the time series in the database. We have to refetch the whole
@@ -56,7 +56,7 @@ Spring caching.
 We'll start by adding caching to the `Database` and `Integrator`
 services.
 
-{% highlight java %}
+```java
 public class Integrator {
 
     ...
@@ -76,14 +76,14 @@ public class Database {
         ...
     }
 }
-{% endhighlight %}
+```
 
 So far so good. Everything is memoized and caches, once written, stay so forever.
 The next step is crucial. There's a coordination effort required
 between cache eviction and new data arrival. We therefore introduce a new
 abstraction that I will unapologetically call a `Repository`
 
-{% highlight java %}
+```java
 public class Repository {
 
     ...
@@ -109,7 +109,7 @@ public class Repository {
     public void reset(String series) {
     }
 }
-{% endhighlight %}
+```
 
 There are multiple rather subtle points about this design. First, the method
 `update` doesn't update the database, but rather

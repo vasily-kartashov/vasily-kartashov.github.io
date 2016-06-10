@@ -14,7 +14,7 @@ Secondly, we want to be able to use `jsonb_*` functions in our JPLQ queries. Thi
 
 Let's start with a custom Hibernate dialect. I will base it on PostgisDialect, as I plan to use both PostGIS and JSON in my application. We need to override a function `registerTypesAndFunctions`.
 
-{% highlight java %}
+```java
 @Override
 protected void registerTypesAndFunctions() {
     super.registerTypesAndFunctions();
@@ -22,7 +22,7 @@ protected void registerTypesAndFunctions() {
     registerFunction("extract",
             new StandardSQLFunction("jsonb_extract_path_text", StandardBasicTypes.STRING));
 }						    
-{% endhighlight %}
+```
 
 Registering column type means that we explain to Hibernate how to deal with the situation when the database says that the target column is of type `jsonb`.
 The class `JSONTypeDescriptor` registers the name of the SQL type, and the convertes from and to database object, which are called `binder` and `extractor`.
@@ -32,7 +32,8 @@ Registering function means that we want to be able to use a function called `jso
 `f(x, y, ...)` we use class `StandardSQLFunction` to explain how to translate it into the plain SQL. Also rather trivial.
 
 Having a JSON string is just half of the problem solved. We now need to translate between domain objects and JSON strings. We will use Jackson to do the heavy lifting for us
-{% highlight java %}
+
+```java
 public class JSONBackedTypeDescriptor<T> extends AbstractTypeDescriptor<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(JSONBackedTypeDescriptor.class);
@@ -91,7 +92,7 @@ public class JSONBackedTypeDescriptor<T> extends AbstractTypeDescriptor<T> {
         throw unknownWrap(value.getClass());
     }
 }
-{% endhighlight %}
+```
 
 The intricacies of wrapping and unwrapping escape me, so I just based my design on other custom types from PostGIS dialect.
 
@@ -100,7 +101,8 @@ The next step is to chain the two converters together:
     Domain Object <-- JavaTypeDescriptor --> String <-- SqlTypeDescriptor --> JSONP
 
 We create an abstract class that chains two descriptors together:
-{% highlight java %}
+
+```java
 public abstract class JSONBackedType<T> extends AbstractSingleColumnStandardBasicType<T> {
 
     public JSONBackedType(JSONBackedTypeDescriptor<T> javaTypeDescriptor) {
@@ -117,10 +119,11 @@ public abstract class JSONBackedType<T> extends AbstractSingleColumnStandardBasi
         return getJavaTypeDescriptor().getJavaTypeClass().getName();
     }
 }
-{% endhighlight %}
+```
 
 This is all the non-domain specific code that we need. We can now proceed with our entities and repositories. Let's define a `Device` entity
-{% highlight java %}
+
+```java
 @Entity
 @Table(name = "devices")
 public class Device {
@@ -138,10 +141,11 @@ public class Device {
 
     ...
 }
-{% endhighlight %}
+```
 
 And an embedded `Status` object
-{% highlight java %}
+
+```java
 public class Status {
 
     private double stateOfCharge;
@@ -150,10 +154,11 @@ public class Status {
 
     ...
 }
-{% endhighlight %}
+```
 
 And now let's define the `StatusType` that would bind the Java and SQL type descriptors
-{% highlight java %}
+
+```java
 public class StatusType extends JSONBackedType<Status> {
 
     private final static JSONBackedTypeDescriptor<Status> descriptor =
@@ -163,10 +168,11 @@ public class StatusType extends JSONBackedType<Status> {
         super(descriptor);
     }
 }
-{% endhighlight %}
+```
 
 So now we can start using JSONB in our queries. For example we can easily find all the devices with state of charge greater than 10%
-{% highlight java %}
+
+```java
 public interface DeviceRepository extends CrudRepository<Device, String> {
 
     @Query("SELECT d FROM Device d WHERE CAST(extract(d.status, 'stateOfCharge') float) > 0.1")
@@ -174,15 +180,16 @@ public interface DeviceRepository extends CrudRepository<Device, String> {
 
     ...
 }
-{% endhighlight %}
+```
 
 The JPQL query will be tranlated in the following SQL query
-{% highlight sql %}
+
+```sql
 select device0_.id as id1_0_,
        device0_.location as location2_0_,
        device0_.status as status3_0_
   from devices device0_
  where cast(jsonb_extract_path_text(device0_.status, 'stateOfCharge') as float4) > 0.1
-{% endhighlight %}
+```
 
 Which is pretty much what I wanted in the first place.

@@ -18,7 +18,7 @@ The file should look like following
 
 Next register a twitter app, starting [here](https://apps.twitter.com/). The complete code of the bot is just few lines of Perl.
 
-{% highlight perl %}
+```perl
 #!/usr/bin/env perl
 
 use strict;
@@ -41,6 +41,6 @@ my $nt = Net::Twitter->new(
 );
 
 my $result = $nt->update($message . ' #Indonesian');
-{% endhighlight %}
+```
 
 There are really few things that can beat Perl for this kind of hacking.

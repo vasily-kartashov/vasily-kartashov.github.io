@@ -17,11 +17,11 @@ The original table sensors looks like following
 
 Let's find all possible status fields
 
-{% highlight sql %}
+```sql
 SELECT DISTINCT json_object_keys(status) AS status_field
            FROM sensors
        ORDER BY status_field;
-{% endhighlight %}
+```
 
 gives us the following list
 
@@ -35,10 +35,10 @@ gives us the following list
 
 Now let's find the highest temperature read by a unit
 
-{% highlight sql %}
+```sql
 SELECT MAX((status->>'temperture')::text)
   FROM sensors;
-{% endhighlight %}
+```
 
 give us
 
@@ -51,11 +51,11 @@ give us
 
 What if we want to know the highest temperature measured by a healthy unit?
 
-{% highlight sql %}
+```sql
 SELECT MAX((status->>'temperture')::text)
   FROM sensors
  WHERE (status->>'healthy')::bool
-{% endhighlight %}
+```
 
 produces a different picture
 
@@ -67,13 +67,13 @@ produces a different picture
 
 Get the average temperature from the healthy sensors grouped by location
 
-{% highlight sql %}
+```sql
 SELECT location,
        AVG((status->>'temperture')::float) AS temperature
   FROM sensors
  WHERE (status->>'healthy')::bool
  GROUP BY location;
-{% endhighlight %}
+```
 
 Gives you this very short list
 
@@ -85,11 +85,11 @@ Gives you this very short list
 
 Let's unwrap the key value store from status into a bigger table. The unfolding operations such as `json_each`, `json_each_text` and so on produce sets of records. In our first iteration let's fetch the packed records.
 
-{% highlight sql %}
+```sql
 SELECT id,
        json_each_text(status) AS status_field
   FROM sensors;
-{% endhighlight %}
+```
 
 which gives us the following table
 
@@ -109,14 +109,14 @@ which gives us the following table
 
 And now let's unfold the `status_field` record
 
-{% highlight sql %}
+```sql
 SELECT id,
        (status).key,
        (status).value
   FROM (SELECT id,
                json_each(status) AS status
           FROM sensors) AS statuses;
-{% endhighlight %}
+```
 
 Which gives us the following table
 
@@ -137,13 +137,13 @@ Which gives us the following table
 Here's the relevant documentation from Postgres website regarding the composite types: http://www.postgresql.org/docs/9.4/static/rowtypes.html.
 Note that the third column has a type of text.
 
-{% highlight sql %}
+```sql
 SELECT DISTINCT pg_typeof((status).key) AS key_type,
                 pg_typeof((status).value) AS value_type
            FROM (SELECT id,
                         json_each_text(status) AS status
                    FROM sensors) AS statuses;
-{% endhighlight %}
+```
 
 Which gives us
 

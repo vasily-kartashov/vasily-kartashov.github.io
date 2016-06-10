@@ -5,7 +5,7 @@ title: How to define the base case for a function that accepts collections
 
 Imagine you have a function that checks if all elements of a collection are equal. A trivial solution would look like following (I deliberately ignore null's)
 
-{% highlight java %}
+```java
 boolean same(List<?> elements) {
 	Object current = elements[0];
 	for (int i = 1; i < elements.length; i++) {
@@ -17,17 +17,17 @@ boolean same(List<?> elements) {
 	}
 	return true;
 }
-{% endhighlight %}
+```
 
 It's all good except we expect the list to be non-empty. Easily enough we can add a simple check to the top of the method and return early.
 
-{% highlight java %}
+```java
 ...
 if (elements.isEmpty()) {
    return ?;
 }
 ...
-{% endhighlight %}
+```
 
 And here the question arises: what is the base case? Should I return `true` or `false`?
 
