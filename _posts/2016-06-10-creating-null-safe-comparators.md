@@ -21,14 +21,14 @@ example of a simple result set in a tabulated form
 
 And the corresponding `User` class might look like following
 
-{% highlight java %}
+```java
 class User {
     @Nullable public String getCity() { ... }
     @Nullable public Integer getZipCode() { ... }
     @Nullable public String getFirstName() { ... }
     @Nullable public String getLastName() { ... }
 }
-{% endhighlight %}
+```
 
 Now it's not that's unbearably complex task or anything, or that we don't know
 how to do that. It's the fact that composing multiple comparators together can
@@ -43,7 +43,7 @@ be easily generalized. Here's the pseudo-code of this wonderful algorithm
 Now given all the flexibility of Java 8 we can create a generic `ComparatorBuilder`
 that would help us to simplify this daunting task, especially around `null` checks
 
-{% highlight java %}
+```java
 public class ComparatorBuilder<T> {
 
     private final List<Comparator<T>> steps = new ArrayList<>();
@@ -81,11 +81,11 @@ public class ComparatorBuilder<T> {
         };
     }
 }
-{% endhighlight %}
+```
 
 So in our case we can create comparator for our `User` class as follows
 
-{% highlight java %}
+```java
 Comparator<User> comparator = new ComparatorBuilder<>()
         .by(User::getCity, String::toLowerCase)
         .by(User::getZipCode)
@@ -94,6 +94,6 @@ Comparator<User> comparator = new ComparatorBuilder<>()
         .build();
 
 Collections.sort(users, comparator);
-{% endhighlight %}
+```
 
 I think it's kind of neat, considering the alternatives.
