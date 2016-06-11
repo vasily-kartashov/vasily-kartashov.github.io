@@ -52,17 +52,16 @@ public class ComparatorBuilder<T> {
         return by(property, Function.identity());
     }
 
-    public <S extends Comparable<S>, Q> ComparatorBuilder<T> by(Function<T, Q> property,
-                                                                Function<Q, S> converter) {
+    public <S extends Comparable<S>, Q> ComparatorBuilder<T> by(Function<T, Q> property, Function<Q, S> converter) {
         steps.add((T a1, T a2) -> {
             Q q1 = property.apply(a1);
             Q q2 = property.apply(a2);
             S s1 = q1 == null ? null : converter.apply(q1);
             S s2 = q2 == null ? null : converter.apply(q2);
             if (s1 == null) {
-                return (s2 == null) ? 0 : -1;
+                return (s2 == null) ?  0 : 1;
             } else {
-                return (s2 == null) ? 1 : s1.compareTo(s2);
+                return (s2 == null) ? -1 : s1.compareTo(s2);
             }
         });
         return this;
@@ -86,13 +85,12 @@ public class ComparatorBuilder<T> {
 So in our case we can create comparator for our `User` class as follows
 
 ```java
-Comparator<User> comparator = new ComparatorBuilder<>()
+Comparator<User> comparator = new ComparatorBuilder<User>()
         .by(User::getCity, String::toLowerCase)
         .by(User::getZipCode)
         .by(User::getLastName)
         .by(User::getFirstName)
         .build();
-
 Collections.sort(users, comparator);
 ```
 
