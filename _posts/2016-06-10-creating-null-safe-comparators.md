@@ -48,11 +48,13 @@ public class ComparatorBuilder<T> {
 
     private final List<Comparator<T>> steps = new ArrayList<>();
 
-    public <S extends Comparable<S>> ComparatorBuilder<T> by(Function<T, S> property) {
+    public <S extends Comparable<S>>
+    ComparatorBuilder<T> by(Function<T, S> property) {
         return by(property, Function.identity());
     }
 
-    public <S extends Comparable<S>, Q> ComparatorBuilder<T> by(Function<T, Q> property, Function<Q, S> converter) {
+    public <S extends Comparable<S>, Q>
+    ComparatorBuilder<T> by(Function<T, Q> property, Function<Q, S> converter) {
         steps.add((T a1, T a2) -> {
             Q q1 = property.apply(a1);
             Q q2 = property.apply(a2);
