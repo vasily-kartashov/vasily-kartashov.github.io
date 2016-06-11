@@ -34,11 +34,11 @@ Now it's not that's unbearably complex task or anything, or that we don't know
 how to do that. It's the fact that composing multiple comparators together can
 be easily generalized. Here's the pseudo-code of this wonderful algorithm
 
+    result = 0
     for (comparator : comparators):
         result = comparator.compare(a, b)
         if (result != 0):
-            return result
-        return 0
+            break
 
 Now given all the flexibility of Java 8 we can create a generic `ComparatorBuilder`
 that would help us to simplify this daunting task, especially around `null` checks
