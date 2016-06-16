@@ -4,7 +4,7 @@ title: Spring data JPA and inheritance
 ---
 
 Let's start adding user management to our application. There are two kind of personal information that we want to capture at the moment: existing users and invitations sent out for new potential customers.
-Invitations ans Users have a lot in common so let's start with entities for our Spring Boot application
+Invitations and Users have a lot in common so let's start with entities for our Spring Boot application
 
 ```java
 @Entity
@@ -55,7 +55,7 @@ for (Person person : firstPage) {
 }
 ```
 
-So let's see what kind of queries the datase issues in the background by placing the following `application.properties` in `/stc/test/resources`
+So let's see what kind of queries the database issues in the background by placing the following `application.properties` in `/src/test/resources`
 
 ```properties
 spring.jpa.show-sql = true
