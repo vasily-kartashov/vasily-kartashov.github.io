@@ -43,7 +43,7 @@ We'll need the following dependencies for our spring boot project
 </dependency>
 ```
 
-_For some odd reason, you'll need add `org.aspectj:aspectjweaver` dependency to
+_For some odd reason, you'll need to add `org.aspectj:aspectjweaver` dependency to
 the project._
 
 We'll start with the User entity
@@ -58,7 +58,7 @@ public class User {
     @GeneratedValue
     private Long id;
 
-    private String firstName, lastName, email
+    private String firstName, lastName, email;
 }
 ```
 
@@ -117,15 +117,16 @@ You're all set. Let's run a simple query and see what Envers does for us:
 ```java
 User user = new User();
 user.setEmail("old-email@tradition.test");
-UserRepository.save(user);
+userRepository.save(user);
 
 InvitationEvent event = new InvitationEvent();
 event.setInviter(user);
-event.setInvitationEmail("invitation-emai@kartashov.com");
+event.setInvitationEmail("invitation-email@kartashov.com");
 eventRepository.save(event);
 Long eventId = event.getId();
 
 user.setEmail("completely-new-email@tradition.test");
+userRepository.save(user);
 ```
 
 At this point if we decide just to fetch the event by ID we'll get the link to the updated user row in table `users` and won't see the email the invitation email was sent from. This is where `RevisionRepository` comes into play. Let's fetch the latest revision of our event and see how the inviter's data looked like at the time the invitation was sent.
@@ -156,7 +157,7 @@ CROSS JOIN revinfo
   ORDER BY events_audit.revision_id ASC
 ```
 
-In the next step we're fetching all the revisions for the IDs that we just fetched, which certainly seems like a not so smart thing to do considering that we could have done it in the first query. One possible explanation is that Envers lets you extend the `revinfo` entities and add fields to it.
+In the next step we're fetching all the revisions for the IDs that we just fetched, which certainly seems like a not such a smart thing to do considering that we could have done it in the first query. One possible explanation is that Envers lets you extend the `revinfo` entities and add fields to it, therefore prepares for worst case scenario.
 
 ```sql
 SELECT revinfo.rev,
@@ -211,7 +212,7 @@ SELECT users_audit.id,
    AND user_audit.id = :user_id
 ```
 
-We are looking for a revision (create or update), based on `user_id`, our target `revision_id` might not have affected the user row, therefore we're looking for `max(revision_id)` for this specific user, which is less than or equal to our target `revision_id`.
+We are looking for a revision (create or update), based on `:user_id`. Our target `:revision_id` might not have affected the user row, therefore we're looking for `max(revision_id)` for this specific user, which is less than or equal to our target `:revision_id`.
 
 Querying data
 ---
