@@ -80,7 +80,8 @@ public class PingController {
 }
 ```
 
-And the final thing we need to explain to our Spring boot application what we're up to.
+And the final thing we need to explain to our Spring boot application what we're up to:
+
 - Enable AspectJ proxies
 - Make Auditor request scoped
 - Make sure that Sprign autowires not the object but a scoped proxy that would create separate instances for every web request
