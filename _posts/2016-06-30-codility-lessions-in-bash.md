@@ -616,31 +616,39 @@ function peaks {
 peaks 1 2 3 4 3 4 1 2 3 4 6 2
 ```
 
-Skipped another rather boring Flags exercise.
+// @Todo Flags
 
-The [count semi-primes exercise](https://codility.com/programmers/task/count_semiprimes/) is trivial but it's nice to play with memoization in bash which forced me to run two indices `pi` and `ps` containing respectively indices of prime numbers and the prime numbers.
+The [count semi-primes exercise](https://codility.com/programmers/task/count_semiprimes/) is trivial but it's nice to play with memoization in bash. I've added tow indices `PRIMES_INDEX` and `PRIMES` containing respectively indices of prime numbers to quickly answer a question if a number is a prime and to loop quickly through prime numbers.
 
 ```bash
+declare -a PRIMES_INDEX=(0 0 1 1 0 1) PRIMES=(2 3 5)
+P_CURRENT=5
+
+function primes {
+  local b=$1 f p
+  while (( P_CURRENT * P_CURRENT <= b )) ; do
+    (( P_CURRENT++ ))
+    f=1
+    for p in "${PRIMES[@]}" ; do
+      (( P_CURRENT % p == 0 )) && { f=0 ; break; }
+    done
+    (( PRIMES_INDEX[P_CURRENT] = f ))
+    (( f == 1 )) && PRIMES+=($P_CURRENT)
+  done
+  echo "${PRIMES[@]}"
+}
+
 function semipr {
-  declare -a r pi=(0 0 1 1) ps=(2 3)
-  local i j p f c=3
+  local i j c p
 
   for i in "$@" ; do
     r=(${i//:/ })
-    while (( c < r[1] )) ; do
-      (( c++ ))
-      f=1
-      for p in "${ps[@]}" ; do
-        (( c % p == 0 )) && { f=0 ; break; }
-      done
-      (( pi[c] = f ))
-      (( f == 1 )) && ps+=($c)
-    done
     (( c = 0 ))
+    primes "${r[1]}"
     for (( j = r[0] ; j <= r[1] ; j++ )) ; do
-      for p in "${ps[@]}" ; do
+      for p in "${PRIMES[@]}" ; do
         (( p * p > j )) && break;
-        if (( j % p == 0 )) && (( pi[j / p] == 1 )) ; then
+        if (( j % p == 0 )) && (( PRIMES_INDEX[j / p] == 1 )) ; then
           (( c++ ))
           break
         fi
@@ -650,7 +658,93 @@ function semipr {
   done
 }
 
-semipr 1:26 4:10 16:20
+semipr 1:26 4:10 16:20 12:2035
 ```
 
-At this point I am pretty certain I am not learning anything new. The exercises are repetitive and math heavy. Let's stop here.
+Very much the same applies for the [count non divisible](https://codility.com/programmers/task/count_non_divisible/), it makes perfect sense to create indices during linear scan to avoid search later on. In this case we needed an index of occurences `os` which tells for every number `i` gives you the number `os[i]` of times `i` occurs in the input array. And the `cs` array is the number of non divisors which is uniformely set to `n` at the beginning, and then reduce while we loop over divisors.
+
+```bash
+function nondiv {
+  declare -a cs=() os=() rs=()
+  local i=0 n=$# j d
+
+  while (( i < 2 * n )) ; do (( os[i++]=0 )) ; done
+  for a in "$@" ; do (( os[a]++ )) ; done
+
+  (( i = 0 )) ; while (( i < 2 * n )) ; do (( cs[i++] = n )) ; done
+
+  for (( d = 1 ; d < 2 * n ; d++ )) ; do
+    (( os[d] == 0 )) && continue
+    for (( j = d ; j < 2 * n ; j += d )) ; do
+      (( cs[j] -= os[d] ))
+    done
+  done
+
+  for a in "$@" ; do
+    rs+=("${cs[$a]}")
+  done
+
+  echo "${rs[@]}"
+}
+
+nondiv 3 1 2 3 6
+```
+
+Followed by [chocolates by numbers](https://codility.com/programmers/task/chocolates_by_numbers/), where you have two different velocities around circle, `m` and `n`. Let's linearize positions. So `a[i+1] = a[i] + n`. To check that two linearized positions represent the same place on the circle we wrap around `m`, in other words steps `p` and `q` represent the same position on the circle if `a[p] % m == a[q] % m` or `(a[p] - a[q]) % m == 0`. And for the same two positions to be on the same progression we need the difference to be divisible by `n` as well `(a[p] - a[q]) % n == 0`.
+
+```bash
+function gcd {
+  local a=$1 b=$2 c
+  while (( a % b != 0 )) ; do
+    c=$a ; a=$b ; (( b = c % b ))
+  done
+  echo "$b"
+}
+
+function choc {
+  local n=$1 m=$2 d=$( gcd "$1" "$2" )
+  echo $(( n / d ))
+}
+
+choc 10 4
+```
+
+The [common prime divisors]() is interesting because of its `reduce` function. GCD of two numbers should be all you need in order to reduce the numbers. So given initial value `a` and `gcd`, the `a / gcd` should be a product of divisors of the very same `gcd`. So we extract common part from `a / gcd` and `gcd` and reduce `a / gcd` by this amount. We proceed till either the number is reduced to 1 or cannot be reduced.
+
+```bash
+function gcd {
+  local a=$1 b=$2 c
+  while (( a % b != 0 )) ; do
+    c=$a ; a=$b ; (( b = c % b ))
+  done
+  echo "$b"
+}
+
+function reduce {
+  local a=$1 g=$2 f d r=1
+  # first division
+  (( f = a / g ))
+  # need to be reduced as f is not a divisor of g
+  while (( g % f != 0 )) ; do
+    # find the amount the f needs to be reduced by
+    d=$( gcd "$g" "$f" )
+    # check if can be reduced
+    (( d == 1 )) && { r=0 ; break ; } || (( f /= d ))
+  done
+  echo "$r"
+}
+
+function cpd {
+  local i a b g p q v
+  declare -a r
+  for i in "$@" ; do
+    r=(${i//:/ }) ; a="${r[0]}" ; b="${r[1]}"
+    g=$( gcd "$a" "$b" )
+    p=$( reduce "$a" "$g" ) ; q=$( reduce "$b" "$g" )
+    (( p == 1 )) && (( q == 1 )) && (( v++ ))
+  done
+  echo "$v"
+}
+
+cpd 15:75 10:30 3:5 22:7744 44:23232
+```
