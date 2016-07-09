@@ -748,3 +748,94 @@ function cpd {
 
 cpd 15:75 10:30 3:5 22:7744 44:23232
 ```
+
+The [ladder](https://codility.com/programmers/task/ladder/) is a counting exercise which is just implementation of Fibonacci numbers. Pretty much the only complexity is to understand that the number of paths leading to n-th rung is `fib(n)`.
+
+```bash
+declare -a FIB=(1 1 2)
+declare FIB_I=2
+
+function fib {
+  local n=$1 f
+  while (( FIB_I < n )) ; do
+    (( FIB_I++ ))
+    (( f = FIB[FIB_I - 2] + FIB[FIB_I - 1] ))
+    FIB+=($f)
+  done
+  echo "${FIB[$n]}"
+}
+
+function lad {
+  declare -a r
+  local a b i f d
+  for i in "$@" ; do
+    r=(${i//:/ }) ; a="${r[0]}" ; b="${r[1]}"
+    f=$( fib "$a" )
+    d=$( echo "2^$b" | bc )
+    echo $(( f % d ))
+  done
+}
+
+lad 4:3 4:2 5:4 5:3 1:1
+```
+
+The [Fibonacci frog](https://codility.com/programmers/task/fib_frog/) is actually dynamic programming exercise, which I was too lazy to implement just yet. I am traversing all possible paths instead, which is very bad. When I reach the same point `c` on two different paths, I am computing the value function at point `c` twice. Nobody should ever do that. Learnings are that you write recursive functions in bash is pain, probably even less pain than iterative versions with manual stack handling.
+
+```bash
+declare -a FIB=(1 2)
+declare FIB_I=1
+
+# generate fibonacci numbers up to n
+function fib {
+  local n=$1 f
+  while (( FIB[FIB_I] <= n )) ; do
+    (( FIB_I++ ))
+    (( f = FIB[FIB_I - 2] + FIB[FIB_I - 1] ))
+    FIB+=($f)
+  done
+}
+
+function jmp {
+  # c - current position
+  # d - next position
+  # f - iterator over fibonacci numbers
+  # m - length of min path, -1 if no path from current point
+  # v - the length of sub path starting from d = c + f
+  local c=$1 d f m v
+  shift
+  # n is the length of the padded array
+  local n=$#
+  declare -a as=("$@")
+
+  # check if we reached the end
+  if (( c == n - 1 )) ; then
+    echo "0"
+  else
+    m=-1
+    for f in "${FIB[@]}" ; do
+      # check if jumping over f is a valid point
+      (( d = c + f ))
+      (( d < n )) || continue
+      (( as[d] == 1 )) || continue
+      # find the optimal path length starting from d
+      v=$( jmp $d "$@" )
+      # update minimum
+      if (( v >= 0 )) ; then
+        if (( m == -1 )) || (( v + 1 < m )) ; then
+          (( m = v + 1 ))
+        fi
+      fi
+    done
+    echo "$m"
+  fi
+}
+
+function frog {
+  # pre-compute fibonacci numbers
+  fib "$#"
+  # pad the array with terminal 1 to denote terminal position
+  jmp -1 "$@" 1
+}
+
+frog 0 0 0 1 1 0 1 0 0 0 0
+```
