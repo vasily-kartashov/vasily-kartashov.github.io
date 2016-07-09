@@ -431,4 +431,4 @@ class DetailsEntity extends MainEntity {
 
 The extending entities only contain the code generating the difference to the data set of the parent template, which helps with code reuse. As with any entities, you can specify the cacheing time, so if for example you want to regenerate templates depending on some timestamp from the database, this is what `getKey()` of the entity should use.
 
-The source code of the base framework is (available on GitHub)[https://github.com/vasily-kartashov/hamlet-core] under GPL 2 license. At one point I am going to publish a follow up note with a non-trivial example application.
+The source code of the base framework is [available on GitHub](https://github.com/vasily-kartashov/hamlet-core) under GPL 2 license. At one point I am going to publish a follow up note with a non-trivial example application.
