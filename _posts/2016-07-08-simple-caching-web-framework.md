@@ -43,6 +43,8 @@ Request
 Very simple albeit wider interface that facades the HTTP request and adds a couple of path matching methods.
 
 ```php
+<?php
+
 interface Request {
     public function environmentNameEndsWith(string $suffix) : bool;
     public function getEnvironmentName() : string;
@@ -75,6 +77,8 @@ Response
 Response interface is trivial and tiny.
 
 ```php
+<?php
+
 interface Response {
     public function output(Request $request, Cache $cache) : void;
 }
@@ -83,6 +87,8 @@ interface Response {
 There is just one non trivial part about it. When response writes its output to stdout (btw. it may as well be easily abstracted by adding `writer` parameter to `output` method) we need to know what was the request, because there might be headers with preconditions that would modify the output. We also need to access the cache to see what was in the cache, returned cached value if possible without re-rendering response, and update the cached value. This is an interesting part, not so trivial. Let's se the implementation of `AbstractResponse` which is the superclass for all other responses.
 
 ```php
+<?php
+
 class AbstractResponse implements Response
 {
     ...
@@ -116,6 +122,8 @@ class AbstractResponse implements Response
 The code is pretty much self explanatory but I am gonna walk through it anyway. If there's an entity (payload) that we want to send, let's load the latest cache entry for this entity. If the cache doesn't have an entry it gets generated. Now we're updating the expiration, and version control headers and output the results, unless someone explicitly told us not to embed the entity. And who might that be? Let's take a look at `OkOrNotModifiedResponse` to see the usage:
 
 ```php
+<?php
+
 class OkOrNotModifiedResponse extends AbstractResponse {
 
     public function __construct(Entity $entity, Request $request) {
@@ -144,6 +152,8 @@ Entity
 The next abstraction is the above mentioned Entity, which is a pretty much the payload of the response plus additional headers like `Content-Type`, `Content-Length` and similar.
 
 ```php
+<?php
+
 interface Entity {
     public function getCachingTime() : int;
     public function getContent() : string;
@@ -159,6 +169,8 @@ Important to note that every entity need to be able efficiently generate a key w
 The main implementation of the `Entity` interface is `AbstractEntity`
 
 ```php
+<?php
+
 abstract class AbstractEntity implements Entity {
     ...
     public function loadOrGenerate(Cache $cache) : CacheEntry {
@@ -205,6 +217,8 @@ Again the code is fairly trivial. We're looking at the cache, and if there's alr
 One example of an entity would be a `JsonEntity` that only asks the extending classes to implement `getData` logic. The rest of cacheing and expiration logic is inherited from `AbstractEntity`. The complete class looks like following:
 
 ```php
+<?php
+
 abstract class AbstractJsonEntity extends AbstractEntity {
 
     abstract protected function getData();
@@ -225,6 +239,8 @@ Resource
 The last abstraction on standard list is the `Resource` which is also a tiny interface
 
 ```php
+<?php
+
 interface Resource {    
     public function getResponse(Request $request) : Response;
 }
@@ -233,6 +249,8 @@ interface Resource {
 The job of `Resources` is to translate requests into responses, in other words to interpret the request, see if it's appropriate, validate input, call business methods, generate response. Some of the resources are trivial and really just return an entity. For this they can extend `EntityResource`
 
 ```php
+<?php
+
 class EntityResource implements Resource {
 
     protected $entity;
@@ -262,6 +280,8 @@ There's really no generic interface for applications. It can do whatever you wan
 - How do we get to cache server.
 
 ```php
+<?php
+
 abstract class AbstractApplication {
 
     abstract protected function findResource(Request $request) : Resource;
@@ -286,6 +306,8 @@ Cache
 The next abstraction is the most trivial one. The only reason it exists is to add a layer on top of Memcached, Redis, Elasticache and similar solutions.
 
 ```php
+<?php
+
 interface Cache {
     public function get(string $key, $defaultValue = null) : CacheEntry;
     public function set(string $key, $value, int $timeToLive = 0);
@@ -310,6 +332,8 @@ Example application
 The most trivial application I can think of is an application that gives you current day, but doesn't recalculate it every time user visits the endpoint. We start with an entity that generates the day and sets proper expiration time for the result.
 
 ```php
+<?php
+
 class DayOfWeekEntity extends JsonEntity {
 
     // Only one cache entry shared across all entities of this type
@@ -332,6 +356,8 @@ class DayOfWeekEntity extends JsonEntity {
 Now let's create our own application
 
 ```php
+<?php
+
 class MyApplication extends AbstractApplication {
 
     // Check if the request is for a registered path
@@ -365,6 +391,8 @@ Last thing that I want to mention here is the template handling. Some of the ren
 One thing is we're provided with is the abstract template entity that expects you to provide data, the path to the template, as well as the rendering engine for example Twig or Smarty.
 
 ```php
+<?php
+
 abstract class AbstractTemplateEntity extends AbstractEntity {
     abstract protected function getTemplatePath() : string;
     abstract protected function getTemplateData();
@@ -402,6 +430,8 @@ And the child template `details.tpl`:
 The same hierarchy is repeated with entities. `MainEntity` and `DetailsEntity` would contain the following code
 
 ```php
+<?php
+
 class MainEntity extends TwigTemplateEntity {
 
     protected function getTemplatePath() : string {
