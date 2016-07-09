@@ -10,6 +10,8 @@ So I started with two main considerations in my mind. The first was to integrate
 The second, also important consideration was to not invent any DSLs, embedded or otherwise, used to replace constructs that the programming languages are already equipped with. To give an example of what I am talking about, I didn't want to write configurations / annotations / ant-matchers and similar nonsense in order to say that URLs starting with `/admin` require that the user is authenticated and belongs to the group admin. Instead the following code would do just fine:
 
 ```php
+<?php
+
 if ($request->startsWith('/admin')) {
   if (!$user->isAuthorized() or !$user->hasRole('admin')) {
     return new NonAuthorizedResponse();
