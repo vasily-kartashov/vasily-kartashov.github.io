@@ -3,9 +3,7 @@ layout: post
 title: Working with JSON in Postgres 9.5
 ---
 
-Let's start with installing docker, which is a very convenient tool for the cases where you just want to try out new software. For example,
-you can have multiple versions of Postgres running on your computer, which you can install, suspend or delete completely without any trace with just a few commands.
-The installation command looks like following:
+Let's start with installing docker, which is a very convenient tool for the cases where you just want to try out new software. For example, you can have multiple versions of Postgres running on your computer, which you can install, suspend or delete completely without any trace with just a few commands. The installation command looks like following:
 
 ```bash
 sudo apt-get install docker.io
@@ -70,6 +68,7 @@ SELECT *
 ```
 
 Find all the sensors where the `depth` is specified
+
 ```sql
 SELECT *
   FROM sensors
@@ -77,6 +76,7 @@ SELECT *
 ```
 
 Let's find all properly placed sensors, where either the `depth` or the `height` are specified, but not both
+
 ```sql
 SELECT *
   FROM sensors

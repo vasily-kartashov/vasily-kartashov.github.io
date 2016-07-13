@@ -213,7 +213,7 @@ Again the code is fairly trivial. We're looking at the cache, and if there's alr
 `Entity` as such is not an abstraction for the payload. It's an abstraction for _payload generator that has memory_. We can ask an `Entity` object to give us the latest value, and this object is smart enough to:
 
 - skip generation if the cache value if fresh enough,
-- only update the expiration header if the newly generate value is the same as the old one,
+- update only the expiration header if the newly generate value is the same as the old one,
 - generate new value otherwise
 
 One example of an entity would be a `JsonEntity` that only asks the extending classes to implement `getData` logic. The rest of cacheing and expiration logic is inherited from `AbstractEntity`. The complete class looks like following:

@@ -31,8 +31,15 @@
  * Update the foundational and global aspects of the page.
  */
 
+@font-face {
+  font-family: "FiraCode";
+  src: url("/public/fonts/FiraCode-Retina.otf") format("opentype");
+}
+
 html {
-  font-family: "PT Sans", Helvetica, Arial, sans-serif;
+  font-family: "Ovo", "PT Sans", Helvetica, Arial, sans-serif;
+  font-feature-settings: "calt" 1;
+  font-variant-ligatures: contextual;
 }
 @media (min-width: 48em) {
   html {
