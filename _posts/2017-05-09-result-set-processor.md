@@ -64,7 +64,7 @@ abstract class ProcessingContext
 }
 ```
 
-If there are no informaition about the structure of these records, then the only two meaningful operations for this kind of context are `collectAll` and `collectHead`. I'll call this context `Collector`
+If there are no information about the structure of these records, then the only two meaningful operations for this kind of context are `collectAll` and `collectHead`. I'll call this context `Collector`
 
 ```
 class Collector extends ProcessingContext
@@ -76,7 +76,7 @@ class Collector extends ProcessingContext
 }
 ```
 
-If we know that the `$records` are associative arrays, then we have more interesting things to do. But whatever we have in mind with this records it should always start with picking fields from each record for further processing. So the next context is going to be a Selector. Clearly whilst knowing that `records` are associative arrays helps us with adding more operations accessible from this context, we still can `collectHead` and `collectAll`, so we a derived class:
+As we now know that the `$records` are associative arrays, we can do more interesting things with them. But whatever we have in mind with this records it should always start with picking a subset from each record for further processing. So the next context is going to be a Selector. Whilst knowing that `records` are associative arrays helps us with adding more operations the the context, we still can do what `Collector` does, i.e. `collectHead` and `collectAll`, therefore:
 
 ```
 class Selector extends Collector
@@ -89,10 +89,10 @@ class Selector extends Collector
 }
 ```
 
-What is a `Converter` or `MapConverter`? A selector lets you pick fields from each record and place them in some sort of a structure. For example `selectValue` let's you pick a value of a field and store it as a scalar, `selectFields` let's you fetch an embedded associative array (subrecord if you wish) from each record, and `map` lets you create a new associative array from values of two fields. The `Converter` is the context in which the API user needs to decide what to do with the selected subrecord.
+What is a `Converter` or `MapConverter`? A selector lets you pick fields from each record and place them in some sort of a structure. For example `selectValue` let's you pick a value of a field and store it as a scalar, `selectFields` let's you fetch an embedded associative array (subrecord if you wish) from each record, and `map` lets you create a new kay/value pair from values of two fields. The `Converter` is the context in which the API user needs to decide what to do with the selected subrecord.
 
 ```
-class Converter
+class Converter extends ProcessingContext
 {
     public function name(string $name): Selector ...
 
@@ -113,7 +113,7 @@ class MapConverter extends Converter
 }
 ```
 
-So method `name` returns the subrecord back into the record it was extracted from under new name. Method `group` groups subrecords by using the remainder of each record as group name. It doesn't return the group back into the record, so the result is actually a collector, i.e. the records of the resulting collector are the groups. The `groupInto` on the other side not only groups subrecords, but also returns the groups back into the record.
+So method `name` returns the subrecord back into the record it was extracted from under new name. Method `group` groups subrecords by using the remainder of each record as group name. It doesn't return the group back into the record, so the result of `group` is actually a collector, i.e. the records are the groups extracted by selector. The `groupInto` on the other side not only groups subrecords, but also pushes the groups back into the record.
 
 At this point I expect the reader to lose all interest. Here is how I would split the example join above
 
@@ -130,6 +130,24 @@ $procedure = $database->prepare($query);
 $procedure->processAll()
     ->selectByPrefix('sensor_')->group('sensors')
     ->collectAll();
+```
+
+So the records look like following. Firstly we get the rows extracted
+
+```
+| id   | sensor_id | sensor_active |
++------+-----------+---------------+
+| c001 | NULL      | NULL          |
+| c002 | s001      | false         |
+```
+
+After we select by prefix and group into a record `sensors`
+
+```
+| id   | sensors                       |
++------+-------------------------------+
+| c001 | []                            |
+| c002 | [{ id: s001, active: false }] |
 ```
 
 That is literally all. You can take a look at the [example imeplementation](https://github.com/vasily-kartashov/hamlet-core/tree/version-2.1/src/Hamlet/Database/Processing) and some [unit tests](https://github.com/vasily-kartashov/hamlet-core/blob/version-2.1/tests/Hamlet/Database/ProcessorTest.php).

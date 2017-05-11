@@ -20,7 +20,7 @@ if ($request->startsWith('/admin')) {
 }
 ```
 
-Generally I've noticed a tendency in programming community to write frameworks that would _force_ you to do the right thing. They're supposed to provide you with a rock solid skeleton for your next application, equip you with enough tools to tweak the behavior without giving you a chance to break things. As usual, in real life the tools given are never enough and you end up hacking and breaking things anyway.
+I personally dislike frameworks that _force_ you to do the right thing. They're supposed to provide you with a rock solid skeleton for your next application, equip you with enough tools to tweak the behavior without giving you a chance to break things. As usual, in real life the tools given are never enough and you end up hacking and breaking things anyway.
 
 Third consideration was to help with code reuse as much as possible. Most websites are quite simply built, there's a master template and numerous adjustments to it. There are generally two ways to reuse templates and resources serving them. First you can extract common parts into helpers where you end up with headers, footers, navigation panels and so on. Second way to use template inheritance to tweak just the specific areas of the page and not caring about how to assemble this page from parts.
 
@@ -243,7 +243,7 @@ The last abstraction on standard list is the `Resource` which is also a tiny int
 ```php
 <?php
 
-interface Resource {    
+interface Resource {
     public function getResponse(Request $request) : Response;
 }
 ```
