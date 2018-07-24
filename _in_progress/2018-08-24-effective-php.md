@@ -1,7 +1,7 @@
----
-layout: post
-title: Effective PHP
----
+// ---
+// layout: post
+// title: Effective PHP
+// ---
 
 This is a short collection of few things that I use to rectify some especially fun features of PHP. This post will be updated but original structure is inspired by Effective Java.
 
