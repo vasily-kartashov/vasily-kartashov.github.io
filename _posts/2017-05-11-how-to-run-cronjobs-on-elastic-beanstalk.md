@@ -9,7 +9,7 @@ One way to address it is to run cronjobs on every instance but leave early if th
 
 The following PHP snippet illustrates just that
 
-```
+```php
 $client = new ElasticBeanstalkClient(...);
 $description = $client->describeEnvironmentResources([
     'EnvironmentName' => BEANSTALK_ENVIRONMENT;
