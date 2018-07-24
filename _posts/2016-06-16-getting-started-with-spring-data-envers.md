@@ -134,7 +134,7 @@ At this point if we decide just to fetch the event by ID we'll get the link to t
 ```java
 Event event = eventRepository
         .findLastChangeRevision(eventId).getEntity();
-assert event.getInviter().getEmail().equals("old-email@tradition.test");       
+assert event.getInviter().getEmail().equals("old-email@tradition.test");
 ```
 
 Behind the scene
@@ -189,7 +189,7 @@ LEFT OUTER JOIN invitation_events_audit invitation_events_audit
                    AND events_audit.id = ea.id)
             AND events_audit.revision_type <> :revision_type
             AND events_audit.id = :event_id
-```           
+```
 
 A lot of the clutter is caused by joined table inheritance strategy.
 
@@ -231,4 +231,4 @@ return AuditReaderFactory(entityManager)
         .getResultList();
 ```
 
-Let's just hope that this is something to be addressed soon.
+Let's just hope that this will be addressed soon.

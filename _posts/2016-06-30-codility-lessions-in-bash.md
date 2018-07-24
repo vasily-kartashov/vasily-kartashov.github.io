@@ -480,7 +480,7 @@ function eqlead {
 eqlead 4 3 4 4 4 2
 ```
 
-The [Dominator](https://codility.com/programmers/task/dominator/) should probably come before EquiLeader. Nothing interesting really, except tried not to loop over things explicitly and use pipes as much as possible. Still need to capture intermediate results with '$()' because I don't see any nice way of branching and merging the pipes althogh [this](http://unix.stackexchange.com/a/66419) might point in the right direction. Another surprise is that `uniq -c` does some idiotic padding on counter column therefore I am not sure how to `cut -f1` out of results and have to go with `read -r n _`. By the way `read -r n` would capture complete lines
+The [Dominator](https://codility.com/programmers/task/dominator/) should probably come before EquiLeader. Nothing interesting really, except tried not to loop over things explicitly and use pipes as much as possible. Still need to capture intermediate results with `$()` because I don't see any nice way of branching and merging the pipes althogh [this](http://unix.stackexchange.com/a/66419) might point in the right direction. Another surprise is that `uniq -c` does some idiotic padding on counter column therefore I am not sure how to `cut -f1` out of results and have to go with `read -r n _`. By the way `read -r n` would capture complete lines
 
 ```bash
 function dominator {
@@ -565,7 +565,7 @@ function minrec {
 minrec 30
 ```
 
-Adn the following [Count Factors Exercise](https://codility.com/programmers/task/count_factors/) is pretty much the same loop, just different counter and break condition.
+And the following [Count Factors Exercise](https://codility.com/programmers/task/count_factors/) is pretty much the same loop, just different counter and break condition.
 
 ```bash
 function nfactors {
@@ -616,9 +616,7 @@ function peaks {
 peaks 1 2 3 4 3 4 1 2 3 4 6 2
 ```
 
-// @Todo Flags
-
-The [count semi-primes exercise](https://codility.com/programmers/task/count_semiprimes/) is trivial but it's nice to play with memoization in bash. I've added tow indices `PRIMES_INDEX` and `PRIMES` containing respectively indices of prime numbers to quickly answer a question if a number is a prime and to loop quickly through prime numbers.
+The [count semi-primes exercise](https://codility.com/programmers/task/count_semiprimes/) is trivial but it's nice to play with memoization in bash. I've added two indices `PRIMES_INDEX` and `PRIMES` containing respectively indices of prime numbers to quickly answer a question if a number is a prime and to loop quickly through prime numbers.
 
 ```bash
 declare -a PRIMES_INDEX=(0 0 1 1 0 1) PRIMES=(2 3 5)
@@ -779,7 +777,7 @@ function lad {
 lad 4:3 4:2 5:4 5:3 1:1
 ```
 
-The [Fibonacci frog](https://codility.com/programmers/task/fib_frog/) is actually dynamic programming exercise, which I was too lazy to implement just yet. I am traversing all possible paths instead, which is very bad. When I reach the same point `c` on two different paths, I am computing the value function at point `c` twice. Nobody should ever do that. Learnings are that you write recursive functions in bash is pain, probably even less pain than iterative versions with manual stack handling.
+The [Fibonacci frog](https://codility.com/programmers/task/fib_frog/) is actually dynamic programming exercise, which I was too lazy to implement just yet. I am traversing all possible paths instead, which is very bad. When I reach the same point `c` on two different paths, I am computing the value function at point `c` twice. Nobody should ever do that. Learnings are that writing recursive functions in bash is pain, probably even more pain than writing iterative versions with manual stack handling.
 
 ```bash
 declare -a FIB=(1 2)
