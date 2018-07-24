@@ -10,7 +10,7 @@ title:            Бортовой журнал
 tagline:          'Random notes'
 description:      ''
 url:              http://notes.kartashov.com
-baseurl:          /
+baseurl:          '/'
 
 author:
   name:           'Vasily Kartashov'
