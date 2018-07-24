@@ -3,7 +3,7 @@ layout: post
 title: Solving Codility exercises in shell script
 ---
 
-How about today we try and solve Codility exercise problems in one of the most inadequate languages. Bash! Never liked the syntax, type system is horrendous, performance is abysmal, development is pretty much echo driven. Let's see if after today I will feel more confident about this language. I will write down all learnings and surprises.
+How about today we try and solve Codility exercise problems in one of the most "odd" languages? Bash! Never liked the syntax, type system is horrendous, performance is abysmal, development is pretty much echo driven. Let's see if after today I will feel more confident about this language. I will write down all learnings and surprises.
 
 The [first exercise](https://codility.com/programmers/task/binary_gap/) is the binary gap. Main job is done by `bc` calculator. Take away from this is the horrible pattern for dealing with trailing characters
 
@@ -115,7 +115,7 @@ function balance {
 balance 3 1 2 4 3
 ```
 
-To solve [Permutation Missing Element Exercise](https://codility.com/programmers/task/perm_missing_elem/) we can use the fact that the sum of arithmetic progression is closed form expression and can be solved in O(1). If we compare this theoretical sum to the actual sum of the array the difference will give us the missing argument.
+To solve [Permutation Missing Element Exercise](https://codility.com/programmers/task/perm_missing_elem/) we can use the fact that the sum of arithmetic progression is a closed form expression and can be computed in O(1). If we compare this theoretical sum to the actual sum of the array the difference will give us the missing argument.
 
 ```bash
 function missing {
@@ -130,7 +130,7 @@ function missing {
 missing 2 3 1 5
 ```
 
-The [Frog River One](https://codility.com/programmers/task/frog_river_one/) kind of pushes us towards using proper ADTs, in this case hash maps. I cheated a bit there storing numbers in a `:` separated string `a`. As this datatype doesn't track the size of our 'list', we better store the size in an additional state variable `w`.
+The [Frog River One](https://codility.com/programmers/task/frog_river_one/) kind of pushes us towards using proper ADTs, in this case hash maps. I cheated a bit here storing numbers in a `:` separated string `a`. As this datatype doesn't track the size of our 'list', we better store the size in an additional state variable `w`.
 
 ```bash
 function wait {
@@ -169,7 +169,7 @@ permchk 4 3 1 2
 permchk 4 1 3
 ```
 
-The next [Messing Integer Exercise](https://codility.com/programmers/task/missing_integer/) is pretty much the variation to the theme, just add uniqueness to `sort -u` to skip over duplicates
+The next [Missing Integer Exercise](https://codility.com/programmers/task/missing_integer/) is pretty much the variation to the theme, just add uniqueness to `sort -u` to skip over duplicates
 
 ```bash
 function findmiss {
@@ -182,7 +182,7 @@ function findmiss {
 findmiss 1 3 6 4 1 2
 ```
 
-So far the ugliest [Max Counts Exercise](https://codility.com/programmers/task/max_counters/) where I try to use fixed length delimited string as poor man's array. The thorny path led me to a couple of realizations. Firstly, `{1..n}` expansions don't understand variables therefore `{1..$n}` won't work. Secondly, there's no simple way to repeat a string multiple times like `"hello" * 5` in python. Had to write a function. Thirdly, it's not so easy to work with strings as arrays as constant padding and trimming is not fun and adds significant clutter, so I probably gonna pass on this data structure in the future.
+So far the ugliest solution for [Max Counts Exercise](https://codility.com/programmers/task/max_counters/) where I try to use fixed length delimited string as poor man's array. The thorny path led me to few realizations. Firstly, `{1..n}` expansions don't "understand" variables therefore `{1..$n}` won't work. Secondly, there's no simple way to repeat a string multiple times like `"hello" * 5` in Python. I had to write a function instead. Thirdly, it's not so easy to work with strings as arrays as constant padding and trimming is not fun and adds significant clutter, so I probably gonna pass on this "data structure" in the future.
 
 ```bash
 readonly W=5
@@ -260,7 +260,7 @@ count 6 10 2 # 6 8 10
 count 7 12 3 # 9 12
 ```
 
-At one point I'll need to start using proper data types such as hash map. Well, maybe next time. For [Genomic Range Query](https://codility.com/programmers/task/genomic_range_query/) I've just create 4 arrays for folds, which for now will do, but clearly very verbose. Learnings from this exercise is that looping through characters in a sting needs a function call to `scan`, array concatenation `+=(1)` is very different from `+=1`, where the second just quietly promotes (demotes?) array to a string, and that `&& || && ||` chains don't always work for long statements with arithmetic context `(( ))`. I will need to explore more on the last point.
+At one point I'll need to start using proper data types such as hash map. Well, maybe next time. For [Genomic Range Query](https://codility.com/programmers/task/genomic_range_query/) I've just created 4 arrays for folds, which will do for now, but are clearly very verbose. Learnings from this exercise is that looping through characters in a sting needs a a function call to `scan`, array concatenation `+=(1)` is very different from `+=1`, where the second expression just quietly promotes (demotes?) array to string, and that `&& || && ||` chains don't always work for long statements with arithmetic context `(( ))`. I will need to explore more on the last point.
 
 ```bash
 function nucleo {
@@ -325,7 +325,7 @@ function minavg {
 
 minavg 4 2 2 5 1 5 8
 ```
-The [triangle exercise](https://codility.com/programmers/task/triangle/) is actually the first one making bash shine a bit. Making an array out of an input string and sort it numerically in one line is not bad at all. Took me literally 2 minutes to solve it, especially because they've put `O(n log n)` into expected complexity. As one of my professors used to say if your math teacher asks you 'which number' the right answer is most probably 0, sometimes 1.
+The [triangle exercise](https://codility.com/programmers/task/triangle/) is actually the first one making bash shine ... a bit. Making an array out of an input string and sort it numerically in one line is not bad at all. Took me literally 2 minutes to solve it, especially because they've put `O(n log n)` into expected complexity. As one of my professors used to say if your math teacher asks you 'which number' the right answer is almost always "0", sometimes "1".
 
 ```bash
 function triangle {
@@ -341,7 +341,7 @@ function triangle {
 triangle 10:2:5 1:8:20 1:1:1
 ```
 
-Followed up by another [short exercise](https://codility.com/programmers/task/distinct/) leveraging `sort -u`. Nothing learned, except maybe that `uniq` compares adjacent lines only, so no way to avoid explicit sorting.
+Followed up by another [short exercise](https://codility.com/programmers/task/distinct/) leveraging `sort -u`. Nothing learned, except maybe that `uniq` compares adjacent lines only, so there's no way to avoid explicit sorting.
 
 ```bash
 function distcount {
@@ -352,7 +352,7 @@ function distcount {
 distcount 2 1 1 2 3 1
 ```
 
-And [another one](https://codility.com/programmers/task/max_product_of_three/) aiming at the same 'skill'.
+And [another one](https://codility.com/programmers/task/max_product_of_three/) aiming at the same "skill".
 
 ```bash
 function maxprod {
@@ -368,7 +368,7 @@ maxprod -3 1 2 -2 5 6
 
 At this point I have to admin I don't commit nearly as many syntactic errors as before. So let's keep going and see where it's gonna take me.
 
-I spent quite some time understanding the [next exercise](https://codility.com/programmers/task/number_of_disc_intersections/) but decided to cheat a bit and take [someone else's solution](http://www.lucainvernizzi.net/blog/2014/11/21/codility-beta-challenge-number-of-disc-intersections/). Interestingly bash really shined in this exercise. The complete solution is not much longer than Luca's python code. Learnings are numerous. Firstly, you can pipe the loops into construct thus avoiding storage. Secondly, pipes operate with their own namespace so assigning outer  variable from within piped code is horribly complex. Thirdly, once in pipes, stay in pipes. Still don't know how to reference input array `$@` from arithmetic context `(( ))`, will have to explore it later.
+I spent quite some time understanding the [next exercise](https://codility.com/programmers/task/number_of_disc_intersections/) but decided to cheat a bit and take [someone else's solution](http://www.lucainvernizzi.net/blog/2014/11/21/codility-beta-challenge-number-of-disc-intersections/). Interestingly bash really excelled in this exercise. The complete solution is not much longer than Luca's python code. Learnings are numerous. Firstly, you can pipe the loops into construct thus avoiding storage. Secondly, pipes operate with their own namespace so assigning an outer variable from within piped code is horribly complex. Thirdly, once in pipes, stay in pipes. Still, I don't know how to reference input array `$@` from arithmetic context `(( ))`, will have to explore it later.
 
 ```bash
 function discint {
@@ -387,7 +387,7 @@ function discint {
 discint 1 5 2 1 4 0
 ```
 
-And after the last high another low with the [fish](https://codility.com/programmers/task/fish/). Considerable amount of time is spent bending the data structures around to reduce the amount of clutter. I took a longer path to create a pipeable function. Still hasn't figured it out how to better return values from a pipe than by `tail -1`. Another pain is adding things to an empty array. There must be a better way than checking `-z "${s+_}"`.  Besides that reminds me on my time at the university where all our code was highly optimized to make it run faster by disregarding readability of the code and contra-intuitive data types.
+And after the last high another low with the [fish](https://codility.com/programmers/task/fish/). Considerable amount of time is spent bending the data structures around to reduce the amount of clutter. I took a longer path to create a pipeable function. Still hasn't figured it out how to better return values from a pipe, other than by `tail -1`. Another pain is adding things to an empty array. There must be a better way than checking `-z "${s+_}"`.  This experience reminded me of my time at the university where all our code was highly optimized to make it run faster by completely disregarding readability of the code and using contra-intuitive data types.
 
 ```bash
 function unwrap {
@@ -480,7 +480,7 @@ function eqlead {
 eqlead 4 3 4 4 4 2
 ```
 
-The [Dominator](https://codility.com/programmers/task/dominator/) should probably come before EquiLeader. Nothing interesting really, except tried not to loop over things explicitly and use pipes as much as possible. Still need to capture intermediate results with `$()` because I don't see any nice way of branching and merging the pipes althogh [this](http://unix.stackexchange.com/a/66419) might point in the right direction. Another surprise is that `uniq -c` does some idiotic padding on counter column therefore I am not sure how to `cut -f1` out of results and have to go with `read -r n _`. By the way `read -r n` would capture complete lines
+The [Dominator](https://codility.com/programmers/task/dominator/) should probably come before EquiLeader. Nothing interesting really, except tried not to loop over things explicitly and use pipes as much as possible. Still need to capture intermediate results with `$()` because I don't see any nice way of branching and merging the pipes althogh [this](http://unix.stackexchange.com/a/66419) probably points in the right direction. Another surprise is that `uniq -c` does some unexpected padding on counter column therefore I am not sure how to `cut -f1` out of results and have to go with `read -r n _`. By the way `read -r n` would capture complete lines
 
 ```bash
 function dominator {
@@ -552,7 +552,7 @@ mdslice 3 2 6 -1 4 5 -1 2
 
 Skipping the [max slice sum](https://codility.com/programmers/task/max_slice_sum/) as this is just a simpler version of the last one.
 
-Following are a set of exercises that I expect to make me use `bc` a lot. The [first one](https://codility.com/programmers/task/min_perimeter_rectangle/) is about finding integer square root.
+Following are a set of exercises that I expect will make me use `bc` a lot. The [first one](https://codility.com/programmers/task/min_perimeter_rectangle/) is about finding integer square root.
 
 ```bash
 function minrec {
@@ -565,7 +565,7 @@ function minrec {
 minrec 30
 ```
 
-And the following [Count Factors Exercise](https://codility.com/programmers/task/count_factors/) is pretty much the same loop, just different counter and break condition.
+And the following [Count Factors Exercise](https://codility.com/programmers/task/count_factors/) is pretty much the same loop, just a different counter and a different break condition.
 
 ```bash
 function nfactors {
@@ -581,7 +581,7 @@ function nfactors {
 nfactors 24
 ```
 
-For the [Peaks Exercise](https://codility.com/programmers/task/peaks/) I just took [someone else's code](http://stackoverflow.com/questions/20886486/codility-peaks-complexity), as it was a very uninspiring problem. I've added comments to the logic, one interesting nuance of the algorithm is the part with integer divisions in `c / i > f` and `c / i == f` used to check if a peak falls within current group. Very nice indeed. No new bash gotchas.
+For the [Peaks Exercise](https://codility.com/programmers/task/peaks/) I just took [someone else's code](http://stackoverflow.com/questions/20886486/codility-peaks-complexity), as it was a fairly uninspiring problem. I've added comments to the logic, one interesting nuance of the algorithm is the part with integer divisions in `c / i > f` and `c / i == f` used to check if a peak falls within current group. Very nice indeed. No new bash gotchas.
 
 ```bash
 function peaks {
@@ -659,7 +659,7 @@ function semipr {
 semipr 1:26 4:10 16:20 12:2035
 ```
 
-Very much the same applies for the [count non divisible](https://codility.com/programmers/task/count_non_divisible/), it makes perfect sense to create indices during linear scan to avoid search later on. In this case we needed an index of occurences `os` which tells for every number `i` gives you the number `os[i]` of times `i` occurs in the input array. And the `cs` array is the number of non divisors which is uniformely set to `n` at the beginning, and then reduce while we loop over divisors.
+Very much the same applies for the [count non divisible](https://codility.com/programmers/task/count_non_divisible/), it makes perfect sense to create indices during linear scan to avoid search later on. In this case we needed an index of occurences `os` which for every number `i` gives you the number of times `os[i]` the number `i` occurs in the input array. And the array `cs` is the number of non divisors which is uniformely set to `n` at the beginning, and then reduce while we loop over divisors.
 
 ```bash
 function nondiv {
@@ -707,7 +707,7 @@ function choc {
 choc 10 4
 ```
 
-The [common prime divisors]() is interesting because of its `reduce` function. GCD of two numbers should be all you need in order to reduce the numbers. So given initial value `a` and `gcd`, the `a / gcd` should be a product of divisors of the very same `gcd`. So we extract common part from `a / gcd` and `gcd` and reduce `a / gcd` by this amount. We proceed till either the number is reduced to 1 or cannot be reduced.
+The [common prime divisors]() is interesting because of its `reduce` function. GCD of two numbers should be all you need in order to reduce the numbers. So given initial value `a` and `gcd`, the `a / gcd` should be a product of divisors of the very same `gcd`. So we extract common part from `a / gcd` and `gcd` and reduce `a / gcd` by this amount. We proceed till either the number is reduced to 1 or cannot be reduced any further.
 
 ```bash
 function gcd {
@@ -747,7 +747,7 @@ function cpd {
 cpd 15:75 10:30 3:5 22:7744 44:23232
 ```
 
-The [ladder](https://codility.com/programmers/task/ladder/) is a counting exercise which is just implementation of Fibonacci numbers. Pretty much the only complexity is to understand that the number of paths leading to n-th rung is `fib(n)`.
+The [ladder](https://codility.com/programmers/task/ladder/) is a counting exercise which is just implementation of Fibonacci numbers. Pretty much the only complexity is to understand that the number of paths leading to `n`-th rung is `fib(n)`.
 
 ```bash
 declare -a FIB=(1 1 2)
@@ -837,3 +837,5 @@ function frog {
 
 frog 0 0 0 1 1 0 1 0 0 0 0
 ```
+
+Enough.

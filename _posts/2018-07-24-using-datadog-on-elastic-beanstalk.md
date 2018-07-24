@@ -5,7 +5,7 @@ title: Using DataDog on AWS Elastic Beanstalk
 
 There are a somewhat limited infromation on how to use DataDog on Elastic Beanstalk platform and it took me personally quite a bit of time to get it working. So here's a short summary of how to make the datadog agent run and also report logs to datadog.
 
-So the first thing that is need to be done is placing a couple of files in predefined locations:
+The first thing that needs to be done is placing a couple of files in predefined locations:
 
 ```yaml
 files:
