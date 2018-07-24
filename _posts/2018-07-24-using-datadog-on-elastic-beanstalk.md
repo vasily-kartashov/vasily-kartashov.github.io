@@ -41,7 +41,7 @@ commands:
 
 Here's to note that install script returns error code if you try to reinstall the agent. That's why we need the guard in front of it checking the existence of the `/opt/datadog-agent` directory.
 
-Next we would like to restart the enging of every application deployment. Stricktly speaking it's not necessary and you might skip this step. I'll provide it here for completeness:
+Next we would like to restart the agent on every application deployment. Stricktly speaking it's not necessary and you might skip this step. I'll provide it here for completeness:
 
 ```yaml
 files:
