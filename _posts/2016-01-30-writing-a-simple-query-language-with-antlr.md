@@ -287,4 +287,4 @@ List<Device> devices = searchService
 
 Rather neat. You can see the complete source code on [GitHub](https://github.com/vasily-kartashov/postgis-spring-data-jpa-example/commit/279b69d80783ad437018f1a689a6c6a620fbce9a)
 
-As a warning note: you probably should not build JPQL queries like this, unless you PoC'ing like I do here. A much more solid idea would be to use [JPQ Criteria API](https://docs.oracle.com/javaee/6/tutorial/doc/gjitv.html).
+As a warning note: you probably should not build JPQL queries like this, unless you PoC'ing like I do here. A much more sound would be using [JPQ Criteria API](https://docs.oracle.com/javaee/6/tutorial/doc/gjitv.html).
