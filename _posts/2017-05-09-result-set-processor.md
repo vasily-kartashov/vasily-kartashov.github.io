@@ -4,7 +4,7 @@ title: Result Set Processor
 tags: php
 ---
 
-Join tables and get data in one go, but split and group and convert manually, or fetch only the data that you need at the moment and face N+1 kind of problems? Lets assume we have a list of `controllers` were each has a set of `sensors` attached. The result should look something like
+Here's a well known dilemma. You would like to fetch data from a couple of tables. Do you a) join tables and get data in one go, but split and group and convert manually, or b) fetch only the data that you need at the moment and face N+1 kind of problems? Lets assume we have a list of `controllers` were each has a set of `sensors` attached. The result should look something like
 
 ```
 [
@@ -24,7 +24,7 @@ Join tables and get data in one go, but split and group and convert manually, or
 ]
 ```
 
-And here are two issues, do you go with
+And here are the both solutions. Do you go with
 
 ```
 SELECT controllers.id AS controller_id,
@@ -52,7 +52,7 @@ foreach (SELECT controllers.id FROM controllers => $id) {
 
 ```
 
-First solution although idiomatic is also tedious and can grow unhealthy for more complex use cases. The second one has body of literature dedicated to it, which is never a good sign.
+First solution although idiomatic is also tedious and can blow up for more complex use cases. The second one has body of literature dedicated to it, which is never a good sign.
 
 The rest of the exposition is in PHP. Bear with me.
 

@@ -67,4 +67,4 @@ protected function executeAlexaRequest(AlexaRequest $request, AlexaResponse $res
 }
 ```
 
-With this we now have one class that can be reused from web, Amazon Alexa and CLI. It's actually not bad, that PHP lets us to "implement" the `execute` method while addng parameters default to `null`.
+With this we now have one class that can be reused from web, Amazon Alexa and CLI. It's actually not bad, that PHP lets us to "implement" the `execute` method while addng parameters that default to `null`.
