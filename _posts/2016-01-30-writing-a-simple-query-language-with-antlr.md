@@ -10,7 +10,7 @@ Let's assume we now have our [database of IoT devices](https://notes.kartashov.c
     location within 10 km from (-37.814, 144.963) and status.stateOfCharge < 10%
 
 
-Although it might sound intimidatingly complex task, the fact is it's rather simple to achive with [ANTLR](https://github.com/antlr/antlr4). Let's begin with the query language. The following [grammar](https://github.com/antlr/antlr4/blob/master/doc/index.md) will do for now.
+Although it might sound like an intimidatingly complex task, the fact is it's rather simple to achive with [ANTLR](https://github.com/antlr/antlr4). Let's begin with the query language. The following [grammar](https://github.com/antlr/antlr4/blob/master/doc/index.md) will do for now.
 
 ```antlr
 grammar Query;
