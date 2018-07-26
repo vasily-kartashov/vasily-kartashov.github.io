@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Using JPA with PostgreSQL JSON
+tags: java postgresql jpa
 ---
 
 From time to time database developers are facing the problem of storing schema-free data, be it user preferences or a dynamic set of telemetry readings. If the set of keys is unknown or changed all the time, then normalizing the data is not an option. Instead most developers 'transpose' the table and produce the following kind of schema

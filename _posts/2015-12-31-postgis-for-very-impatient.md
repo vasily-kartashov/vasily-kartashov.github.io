@@ -1,6 +1,7 @@
 ---
 layout: post
 title: PostGIS for very impatient
+tags: postgresql postgis
 ---
 
 As you may know, PostGIS is a PotgreSQL extension for working with spatial data, such as points, lines nad polygons.8

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Using Spring request scoped beans for auditing
+tags: java spring aop
 ---
 
 Every multi-layerd application is built on idea of separation of concerns. The presentational layer knows about raw JSON payload and HTTP headers, but the service layer would only know about the domain objects, whereas the

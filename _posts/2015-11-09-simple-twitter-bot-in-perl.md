@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Simple twitter bot in Perl
+tags: perl twitter
 ---
 
 Let's write a simple twitter bot that publishes flash cards containing an Indonesian (because why not, they're neighbours) and an English word. And let's do that once an hour.

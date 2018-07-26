@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Arduino with C / make on ubuntu
+tags: c arduino
 ---
 
 As I am not really a C / make person, let's document rather trivial findings on how to compile and deploy arduino based project without using Arduino IDE. It's a well known fact that most arduinos out there are exclusively utilized for LEDs blink, so who I am to argue? This is how you do it in C:

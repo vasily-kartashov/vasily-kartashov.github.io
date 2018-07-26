@@ -1,6 +1,7 @@
 ---
 layout: post
 title: How to define the base case for a function that accepts collections
+tags: java
 ---
 
 Imagine you have a function that checks if all elements of a collection are equal. A trivial solution would look like following (I deliberately ignore null's)

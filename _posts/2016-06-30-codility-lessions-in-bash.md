@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Solving Codility exercises in shell script
+tags: shell
 ---
 
 How about today we try and solve Codility exercise problems in one of the most "odd" languages? Bash! Never liked the syntax, type system is horrendous, performance is abysmal, development is pretty much echo driven. Let's see if after today I will feel more confident about this language. I will write down all learnings and surprises.

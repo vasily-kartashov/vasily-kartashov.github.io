@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Result Set Processor
+tags: php
 ---
 
 Join tables and get data in one go, but split and group and convert manually, or fetch only the data that you need at the moment and face N+1 kind of problems? Lets assume we have a list of `controllers` were each has a set of `sensors` attached. The result should look something like

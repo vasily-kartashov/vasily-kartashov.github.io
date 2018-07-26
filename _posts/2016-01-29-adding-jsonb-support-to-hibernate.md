@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Adding JSONB support to Hibernate
+tags: hibernate postgresql
 ---
 
 While `@Converter`s are convenient to translate JSON objects to and from domain objects, there is an important limitation to this approach.
@@ -21,7 +22,7 @@ protected void registerTypesAndFunctions() {
     registerColumnType(JSONTypeDescriptor.INSTANCE.getSqlType(), "jsonb");
     registerFunction("extract",
             new StandardSQLFunction("jsonb_extract_path_text", StandardBasicTypes.STRING));
-}						    
+}
 ```
 
 Registering column type means that we explain to Hibernate how to deal with the situation when the database says that the target column is of type `jsonb`.

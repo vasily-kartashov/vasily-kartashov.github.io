@@ -1,6 +1,7 @@
 ---
 layout: post
 title: PHP Global Error Handler
+tags: php
 ---
 
 What do we do with uncaught `Throwable`s in PHP 7? Following things come to mind:

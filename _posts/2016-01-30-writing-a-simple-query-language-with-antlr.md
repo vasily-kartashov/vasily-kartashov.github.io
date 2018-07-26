@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Writing a simple query language with ANTLR
+tags: java antlr postgresql
 ---
 
 Let's assume we now have our [database of IoT devices](https://notes.kartashov.com/2016/01/29/adding-jsonb-support-to-hibernate/) and we'd like to provide a simple search interface that would allow us to send queries like the following

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: How to Run Cronjobs on Elastic Beanstalk
+tags: aws php elastic-beanstalk
 ---
 
 Although Elastic Beanstalk has a nice option of specifiying a cron tasks and make them run on leader instance it doesn't always work. For example the leader might be terminated which shouldn't be an issue within an autoscaling environment, but with a teminated leader all your cron tasks are effectively suspended till next redeployment.

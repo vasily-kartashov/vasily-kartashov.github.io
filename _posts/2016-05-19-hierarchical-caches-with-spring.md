@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Hierarchical caches with Spring
+tags: java spring
 ---
 
 Imagine a huge database with a lot of data, that you don't want to stress too

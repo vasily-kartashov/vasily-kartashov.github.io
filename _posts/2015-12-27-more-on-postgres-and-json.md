@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Working with JSON in Postgres 9.5
+tags: postgresql
 ---
 
 Let's start with installing docker, which is a very convenient tool for the cases where you just want to try out new software. For example, you can have multiple versions of Postgres running on your computer, which you can install, suspend or delete completely without any trace with just a few commands. The installation command looks like following:

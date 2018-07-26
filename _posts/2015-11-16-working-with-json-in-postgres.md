@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Working with JSON in PostgreSQL
+tags: postgresql
 ---
 
 The original table sensors looks like following

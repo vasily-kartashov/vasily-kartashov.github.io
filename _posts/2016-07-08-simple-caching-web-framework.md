@@ -1,6 +1,7 @@
 ---
 layout: post
 title: A simple caching web framework
+tags: php framework
 ---
 
 A while ago I was working at an agency and we had to develop a fairly simple set of web apps, that would scale very well and integrate tightly with a shared caching bus and content distribution network. Performance was the key. Especially for the markets around the globe, some of them with generally slow internet connections. This post is a short schematic description about the design I came up with.

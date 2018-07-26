@@ -1,6 +1,7 @@
 ---
 layout: post
 title: PHP Command Resource
+tags: php symfony
 ---
 
 There's a striking similarity between

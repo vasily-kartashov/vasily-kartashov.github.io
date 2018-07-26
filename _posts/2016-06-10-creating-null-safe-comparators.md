@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Creating null-safe comparators in Java
+tags: java
 ---
 
 Domain objects can be quite tricky to sort. Depending on business requirements it

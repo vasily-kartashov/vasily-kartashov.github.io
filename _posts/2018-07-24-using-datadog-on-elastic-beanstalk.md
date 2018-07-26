@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Using DataDog on AWS Elastic Beanstalk
+tags: aws datadog logs elastic-beanstalk
 ---
 
 There are a somewhat limited infromation on how to use DataDog on Elastic Beanstalk platform and it took me personally quite a bit of time to get it working. So here's a short summary of how to make the datadog agent run and also report logs to datadog.

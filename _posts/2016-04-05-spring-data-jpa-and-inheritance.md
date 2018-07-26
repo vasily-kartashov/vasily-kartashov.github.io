@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Spring data JPA and inheritance
+tags: java spring jpa
 ---
 
 Let's start adding user management to our application. There are two kind of personal information that we want to capture at the moment: existing users and invitations sent out for new potential customers.
