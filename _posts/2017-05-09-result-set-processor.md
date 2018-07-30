@@ -90,7 +90,7 @@ class Selector extends Collector
 }
 ```
 
-What is a `Converter` or `MapConverter`? A selector lets you pick fields from each record and place them in some sort of a structure. For example `selectValue` let's you pick a value of a field and store it as a scalar, `selectFields` let's you fetch an embedded associative array (subrecord if you wish) from each record, and `map` lets you create a new kay/value pair from values of two fields. The `Converter` is the context in which the API user needs to decide what to do with the selected subrecord.
+What is a `Converter` or a `MapConverter`? A selector lets you pick fields from each record and place them in some sort of a structure. For example `selectValue` let's you pick a value of a field and store it as a scalar, `selectFields` let's you fetch an embedded associative array (subrecord if you wish) from each record, and `map` lets you create a new kay/value pair from values of two fields. The `Converter` is the context in which the API user needs to decide what to do with the selected subrecord.
 
 ```
 class Converter extends ProcessingContext
@@ -114,7 +114,7 @@ class MapConverter extends Converter
 }
 ```
 
-So method `name` returns the subrecord back into the record it was extracted from under new name. Method `group` groups subrecords by using the remainder of each record as group name. It doesn't return the group back into the record, so the result of `group` is actually a collector, i.e. the records are the groups extracted by selector. The `groupInto` on the other side not only groups subrecords, but also pushes the groups back into the record.
+So method `name` returns the subrecord back into the record it was extracted from under a new name. Method `group` groups subrecords by using the remainder of each record as a group key. It doesn't return the group back into the record, so the result of `group` is actually a collector, i.e. the records are the groups extracted by selector. The `groupInto` on the other side not only groups subrecords, but also pushes the groups back into the record.
 
 At this point I expect the reader to lose all interest. Here is how I would split the example join above
 
