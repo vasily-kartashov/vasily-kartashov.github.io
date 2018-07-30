@@ -380,7 +380,7 @@ class MyApplication extends AbstractApplication {
 }
 ```
 
-That's all you need to do. The first visit to the endpoint generates the entity. The value is stored in cache and sent back to the client. The response headers have ETag, validation and expiration headers explaining to the client and proxies that the value just generated won't change till the end of the day today. If the user hits refresh and the browser decides to send new request with ETag and validations headers, the response is going to be 304 and no new entity will be generated.  In fact the response might as well be from a CDN. The application might as well sit behind a load balancer, as the shared cache allows for easy parallelization.
+That's all you need to do. The first visit to the endpoint generates the entity. The value is stored in cache and sent back to the client. The response headers have ETag, validation and expiration headers explaining to the client and proxies that the value just generated won't change till the end of the day today. If the user hits refresh and the browser decides to send new request with ETag and validations headers, the response is going to be 304 and no new entity will be generated.  In fact the response might as well be from a CDN. Such application is well placed behind a load balancer, as the shared cache allows for better scalability.
 
 Template inheritance
 --------------------
