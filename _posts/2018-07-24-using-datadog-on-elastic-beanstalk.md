@@ -4,9 +4,9 @@ title: Using DataDog on AWS Elastic Beanstalk
 tags: aws datadog logs elastic-beanstalk
 ---
 
-There are a somewhat limited infromation on how to use DataDog on Elastic Beanstalk platform and it took me personally quite a bit of time to get it working. So here's a short summary of how to make the datadog agent run and also report logs to datadog.
+There is somewhat limited information available on how to use DataDog on the Elastic Beanstalk platform, and it took me quite a bit of time to get it working. Here is a summary of how to make the DataDog agent run and report logs to DataDog.
 
-The first thing that needs to be done is placing a couple of files in predefined locations:
+First, place two files in predefined locations: a minimal DataDog configuration file with an API key, DataDog endpoint, and a key enabling log collection, and a second file containing a list of log files you would like to watch and send to DataDog.
 
 ```yaml
 files:
@@ -30,9 +30,7 @@ files:
          source: php
 ```
 
-The first file is a minimal datadog configuration file with an API key, DataDog endpoint and a key enabling log collection. The second file contains a list of log files we'd like to watch and send to DataDog.
-
-Next, we need to execute command installing datadog agent
+Next, execute the command to install the DataDog agent, noting that the install script returns an error code if you try to reinstall the agent. Therefore, you should include a guard checking for the existence of the /opt/datadog-agent directory before executing the install command:
 
 ```yaml
 commands:
@@ -40,9 +38,7 @@ commands:
     command: "[ -d /opt/datadog-agent ] || curl -L https://raw.githubusercontent.com/DataDog/datadog-agent/master/cmd/agent/install_script.sh | sudo DD_API_KEY=012301230123012301230123 bash"
 ```
 
-Here's to note that install script returns error code if you try to reinstall the agent. That's why we need the guard in front of it checking the existence of the `/opt/datadog-agent` directory.
-
-Next we would like to restart the agent on every application deployment. Stricktly speaking it's not necessary and you might skip this step. I'll provide it here for completeness:
+Optionally, you may also choose to restart the agent on every application deployment. This is not strictly necessary, but provided here for completeness:
 
 ```yaml
 files:
@@ -66,4 +62,4 @@ files:
       ...
 ```
 
-And that would be it.
+And that's it!

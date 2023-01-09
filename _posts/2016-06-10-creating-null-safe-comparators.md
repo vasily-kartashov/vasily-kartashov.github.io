@@ -4,15 +4,7 @@ title: Creating null-safe comparators in Java
 tags: java
 ---
 
-Domain objects can be quite tricky to sort. Depending on business requirements it
-my take considerable effort to look for all edge cases while producing a robust
-sorting order.
-
-Let's say we have client database where we sort users by their city first,
-then by zip code, then by last name and then by first name. If any of those
-properties are not set we want to move users to the end of the list.
-You also may want to ignore case when comparing cities. Here's an
-example of a simple result set in a tabulated form
+Sorting domain objects can be challenging because it may require significant effort to consider all edge cases and produce a robust sorting order that meets business requirements. For example, consider a client database where users are sorted first by city, then by zip code, then by last name, and finally by first name. If any of these properties are not set, we want to move the user to the end of the list. It may also be necessary to ignore the case when comparing cities. An example of a simple result set in tabulated form is shown below:
 
     | Brisbane  | 4000 | Burke     | Jason   |
     | Brisbane  | null | Appleseed | Frank   |
@@ -20,7 +12,7 @@ example of a simple result set in a tabulated form
     | Melbourne | 3003 | Collins   | Grant   |
     | null      | 1000 | null      | Matthew |
 
-And the corresponding `User` class might look like following
+The corresponding User class could look like this:
 
 ```java
 class User {
@@ -31,9 +23,7 @@ class User {
 }
 ```
 
-Now it's not that's unbearably complex task or anything, or that we don't know
-how to do that. It's the fact that composing multiple comparators together can
-be easily generalized. Here's the pseudo-code of this wonderful algorithm
+Although it's not an overly complex task, composing multiple comparators can be generalized. Here is a pseudo-code algorithm for this purpose:
 
     result = 0
     for (comparator : comparators):
@@ -41,8 +31,7 @@ be easily generalized. Here's the pseudo-code of this wonderful algorithm
         if (result != 0):
             break
 
-Now given all the flexibility of Java 8 we can create a generic `ComparatorBuilder`
-that would help us to simplify this daunting task, especially around `null` checks
+Using the flexibility of Java 8, we can create a generic `ComparatorBuilder` to simplify this task, particularly in regards to null checks:
 
 ```java
 public class ComparatorBuilder<T> {
@@ -85,7 +74,7 @@ public class ComparatorBuilder<T> {
 }
 ```
 
-So in our case we can create comparator for our `User` class as follows
+For example, we can create a comparator for the `User` class as follows:
 
 ```java
 Comparator<User> comparator = new ComparatorBuilder<User>()
@@ -97,4 +86,4 @@ Comparator<User> comparator = new ComparatorBuilder<User>()
 Collections.sort(users, comparator);
 ```
 
-I think it's kind of neat, considering the alternatives.
+Overall, this approach is quite neat compared to the alternatives.

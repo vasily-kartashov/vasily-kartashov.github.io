@@ -4,15 +4,10 @@ title: PHP Command Resource
 tags: php symfony
 ---
 
-There's a striking similarity between
+There is an obvious similarity between web resources, command-line interface (CLI) commands, and Alexa resources. Web resources transform HTTP requests into HTTP responses, CLI commands accept user input and trigger business logic while occasionally reporting back to the user, and Alexa resources encode parsed voice commands and report back a JSON-formatted response. In fact, there is probably a 90% overlap between these three types of resources. Here is a short note on how to use this overlap to your advantage:
 
-- web resources, i.e. things that transform an http request into an http response,
-- cli commands that accept user input and trigger some business logic occasionally reporting back to the user, and
-- alexa resources, that encode parsed voice commands and report back a JSON formatted bowl of spagghetti
+First, it is important to note that in the process of transforming input into output, we will go through multiple stages, and these stages are largely disjoint. An HTTP request must conform to a specific web service specification, an Alexa request must conform to its own specification, and a CLI request must conform to the flavor of command line utilities you prefer.
 
-In fact there's probably 90% overlap. So here's a short note about how to use this overlap to your advantage.
-
-First thing to note, is that in a process of transforming input into output we'll be going through multiple stages, and these stages are largely disjoint. HTTP request will need to conform to your web service spec, Alexa it's own spec, and CLI to whatever flavour of command line utilities you prefer. Here's a short diagram:
 
                                                     +---------+
     HTTP Request  -> Authorization -> Validation -> |         | -> HTTP Formatting  -> Output
@@ -20,9 +15,7 @@ First thing to note, is that in a process of transforming input into output we'l
     CLI Request -> Validation                    -> |         | -> Output
                                                     +---------+
 
-So the questionof reuse boils down to this one box in the middle. The interface of the box should be the common denominator and output should be understandable by all possible clients of this box.
-
-The easiest interface one can think of is the `Symfony\Component\Console\Command\Command` as in
+To reuse code across these different types of resources, the interface should be the common denominator, and the output should be understandable by all possible clients of this interface. One possible interface is the Symfony\Component\Console\Command\Command, which can be extended to operate on the psr/http-message interfaces as well. For example:
 
 ```
 protected function execute(
@@ -36,7 +29,7 @@ protected function execute(
 }
 ```
 
-We can extend it a bit with the following method operating on `psr/http-message` interfaces. For example as follows:
+To extend the `Symfony\Component\Console\Command\Command` interface to work with `psr/http-message` interfaces, we can add the following method:
 
 ```
 protected function executeWebRequest(RequestInterface $request, ResponseInterface $response)
@@ -49,7 +42,7 @@ protected function executeWebRequest(RequestInterface $request, ResponseInterfac
 }
 ```
 
-And one more method for Alexa:
+We can also add a method for handling Alexa requests:
 
 ```
 protected function executeAlexaRequest(AlexaRequest $request, AlexaResponse $response)
@@ -67,4 +60,4 @@ protected function executeAlexaRequest(AlexaRequest $request, AlexaResponse $res
 }
 ```
 
-With this we now have one class that can be reused from web, Amazon Alexa and CLI. It's actually not bad, that PHP lets us to "implement" the `execute` method while addng parameters that default to `null`.
+With these methods, we can reuse the same class from web, Amazon Alexa, and CLI. It is convenient that PHP allows us to "implement" the `execute` method while adding parameters that default to `null`.
