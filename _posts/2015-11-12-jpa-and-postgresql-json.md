@@ -35,9 +35,7 @@ SELECT sensor_id
  WHERE (sensor_status->>'healthy')::boolean = false;
 ```
 
-It is also possible to maintain this structure in the application logic by using converters. The last step is to add a converter to your entity class to explain to your JPA implementation how to convert between the database data and your domain model, and back.
-
-In this example, we're using Jackson for JSON handling and the annotations that we need to help Jackson to see through. Our converter contains a bit of boilerplate but it's worth it to have a structured data in the database and SQL queries.
+Another great aspect of this solution is that it can also be used in the application logic by using converters that handle the data conversions. For example, by using the Jackson library, you can create a `Status` class with annotations that allow it to work seamlessly with the JSON data stored in the database:
 
 ```java
 public class Status {
@@ -64,7 +62,7 @@ public class Status {
 }
 ```
 
-The converter that would convert between database data and the domain Status object contains quite a bit of boilerplate.
+And a converter class can convert between the database data and the domain `Status` object, taking care of the unpleasant serialization and deserialization work:
 
 ```java
 @Converter
@@ -95,7 +93,7 @@ public class ConfigConverter implements AttributeConverter<Config, String> {
 }
 ```
 
-The last thing you should do is to add a converter to your entity class to explain your JPA implementation how to convert between the database data and your domain model and back
+By using this approach, you can have a more flexible, dynamic and maintainable data structure with a well-structured format, like JSON, and you can perform complex queries on it by just writing SQL and you can use the structure also in your application logic for more flexibility and maintainability.
 
 ```java
 @Entity
