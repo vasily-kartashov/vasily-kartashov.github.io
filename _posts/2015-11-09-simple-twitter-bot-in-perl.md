@@ -4,10 +4,9 @@ title: Simple twitter bot in Perl
 tags: perl twitter
 ---
 
-Let's write a simple twitter bot that publishes flash cards containing an Indonesian (because why not, they're neighbours) and an English word. And let's do that once an hour.
+are you looking for a fun project to try out? How about creating a twitter bot that publishes flashcards with Indonesian and English words? And let's make it even more fun by setting it to run once an hour.
 
-First thing first download the list of the most used words, for example from [101languages](http://www.101languages.net/indonesian/most-common-indonesian-words/).
-The file should look like following
+First things first, let's gather a list of the most commonly used words in Indonesian, you can find it on sites like [101languages](http://www.101languages.net/indonesian/most-common-indonesian-words/). Once you have the list, it should look something like this:
 
     itu     it
     akan    will
@@ -17,7 +16,9 @@ The file should look like following
     anda    you
     ada     exist
 
-Next register a twitter app, starting [here](https://apps.twitter.com/). The complete code of the bot is just few lines of Perl.
+Next step is to register for a twitter app, you can do that by heading over to their [website](https://apps.twitter.com/). The complete code for the bot is just a few lines of Perl. Trust me, there's nothing better than Perl for this kind of quick and easy hacking.
+
+The code looks something like this:
 
 ```perl
 #!/usr/bin/env perl
@@ -44,4 +45,4 @@ my $nt = Net::Twitter->new(
 my $result = $nt->update($message . ' #Indonesian');
 ```
 
-There are really few things that can beat Perl for this kind of hacking.
+This is a great project to learn more about programming, Perl and twitter bots. Plus, you'll be learning some new words in Indonesian!

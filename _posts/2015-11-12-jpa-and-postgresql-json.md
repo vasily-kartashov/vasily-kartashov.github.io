@@ -4,7 +4,7 @@ title: Using JPA with PostgreSQL JSON
 tags: java postgresql jpa
 ---
 
-From time to time database developers are facing the problem of storing schema-free data, be it user preferences or a dynamic set of telemetry readings. If the set of keys is unknown or changed all the time, then normalizing the data is not an option. Instead most developers 'transpose' the table and produce the following kind of schema
+As database developers, we sometimes come across the challenge of storing data that doesn't have a fixed schema, such as user preferences or dynamic telemetry readings. When the set of keys is constantly changing or unknown, it's not possible to normalize the data. This is where "transposing" tables comes in - it's a common solution where a table is created with the following kind of schema:
 
     | sensor_id | location        |
     +-----------+-----------------+
@@ -17,9 +17,9 @@ From time to time database developers are facing the problem of storing schema-f
     | healthy      | "false"      |         1 |
     ...
 
-There are many issues with this design including unnecessary join, single type (usually as string or a blob), single layer of indirection and so on. We've all been there at one point in our careers. With the advance of NoSQL databases the attention shifted to more flexible data structures. The most radical argument of the proponents of such move essentially boiled down to highlighting this kind of problems as mentioned above.
+However, this approach has its downsides - it can lead to unnecessary joins, single type (usually a string or a blob), and a single layer of indirection. With the rise of NoSQL databases, the focus has shifted towards more flexible data structures as a solution to these issues.
 
-A more sensible approach that was to store the status data in the same table as sensors and use some structured format such as XML or JSON, like following
+A more sensible approach is to store the status data in the same table as the sensors, using a structured format such as XML or JSON. For example, in PostgreSQL:
 
     | sensor_id | sensor_location | sensor_status           |
     +-----------+-----------------+-------------------------+
@@ -27,7 +27,7 @@ A more sensible approach that was to store the status data in the same table as 
     |           |                 |   "healthy" : false }   |
     ...
 
-The great news about this solution is that if you do that in PostgreSQL and declare the type of the STATUS field to be `json` or even better `jsonb`, then the status data is stored not as a string but as a structured binary data, and you can use this structure in your SQL queries. For example it's now possible to quickly find all unhealthy sensors
+This approach allows for structured data in the database and makes it possible to use SQL queries to quickly find all unhealthy sensors, for example:
 
 ```sql
 SELECT sensor_id
@@ -35,7 +35,9 @@ SELECT sensor_id
  WHERE (sensor_status->>'healthy')::boolean = false;
 ```
 
-Now we have structured data in the database, and SQL queries. Can we also keep this structure in the application logic? For that we can use converters that would do the heavy ugly lifting for us. Let's start by creating the Status class. We will be using Jackson for JSON handling, and these are the annotations that we need to help Jackson to see through.
+It is also possible to maintain this structure in the application logic by using converters. The last step is to add a converter to your entity class to explain to your JPA implementation how to convert between the database data and your domain model, and back.
+
+In this example, we're using Jackson for JSON handling and the annotations that we need to help Jackson to see through. Our converter contains a bit of boilerplate but it's worth it to have a structured data in the database and SQL queries.
 
 ```java
 public class Status {
