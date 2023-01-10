@@ -4,7 +4,7 @@ title: How to define the base case for a function that accepts collections
 tags: java
 ---
 
-Imagine you have a function that checks if all elements of a collection are equal. A trivial solution would look like following (I deliberately ignore null's)
+Sometimes, it is necessary to check if all elements of a collection are the same. A trivial solution to this problem is to compare each element to the first element in the collection and return `true` if they are all the same. For simplicity, we can ignore `null` elements in this comparison:
 
 ```java
 boolean same(List<?> elements) {
@@ -20,7 +20,7 @@ boolean same(List<?> elements) {
 }
 ```
 
-It's all good except we expect the list to be non-empty. Easily enough we can add a simple check to the top of the method and return early.
+However, it may not be obvious what to do with an empty collection. The question of the base case arises: are all elements of an empty collection the same or not?
 
 ```java
 ...
@@ -30,10 +30,10 @@ if (elements.isEmpty()) {
 ...
 ```
 
-And here the question arises: what is the base case? Should I return `true` or `false`?
+One way to reason about it is to start with the above-mentioned method and consider how it should work for smaller collections.
 
-Start with the implied contract of the abovementioned method, i.e. if the method returns true for a given collection, then removing an element from this collection should not change the result.
-Indeed, if `same(Lists.of(a, b, c))` returns true, then `same(Lists.of(a, b))` should also return true, and by continuation `same(Collections.emptyList())` should also return true. Why is that important?
-Because a logically sound API is easier to work with.
+> If the method returns `true` for a given collection, then removing an element from this collection should not change the result. 
 
-Method contracts usually make a great addition to documentation and provide you with a multutude of scenarions to be covered with unit tests.
+For example, if `same(Lists.of(a, b, c))` returns `true`, then `same(Lists.of(a, b))` should also return `true`, and by continuation `same(Collections.emptyList())` should also return `true`. This is important because a logically sound API is easier to work with.
+
+Such method contracts usually make a great addition to documentation and provide you with a multitude of scenarios to be covered with unit tests.
