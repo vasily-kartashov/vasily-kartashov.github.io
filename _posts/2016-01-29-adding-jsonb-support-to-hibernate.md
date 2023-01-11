@@ -4,9 +4,9 @@ title: Adding JSONB support to Hibernate
 tags: hibernate postgresql
 ---
 
-As you may be aware, the use of @Converters allows for the seamless translation of JSON objects to and from domain objects. However, there is a limitation to this approach in that it prohibits the use of JSON functionalities in JPQL queries, forcing one to rely solely on native SQL queries. To overcome this limitation, a custom Hibernate dialect that supports JSONB type and functions can be implemented, thereby exposing them to the JPQL level.
+As you may be aware, the use of `@Converters` allows for the seamless translation of JSON objects to and from domain objects. However, there is a limitation to this approach in that it prohibits the use of JSON functionalities in JPQL queries, forcing one to rely solely on native SQL queries. To overcome this limitation, a custom Hibernate dialect that supports JSONB type and functions can be implemented, thereby exposing them to the JPQL level.
 
-To accomplish this, we can create a custom Hibernate dialect that is based on PostgisDialect, as we plan to incorporate both PostGIS and JSON in our application. This can be achieved by overriding the `registerTypesAndFunctions` function. The source code for this implementation can be found on [GitHub](https://github.com/vasily-kartashov/postgis-spring-data-jpa-example/commit/8e2409def78b611bcb3d18d070e36ab65c61443f).
+To accomplish this, we can create a custom Hibernate dialect that is based on `PostgisDialect`, as we plan to incorporate both PostGIS and JSON in our application. This can be achieved by overriding the `registerTypesAndFunctions` function. The source code for this implementation can be found on [GitHub](https://github.com/vasily-kartashov/postgis-spring-data-jpa-example/commit/8e2409def78b611bcb3d18d070e36ab65c61443f).
 
 Our objective is to achieve three key goals:
 
@@ -16,7 +16,7 @@ Our objective is to achieve three key goals:
 
 By creating a custom Hibernate dialect, we can accomplish these goals, making our development process more efficient and streamlined.
 
-Let's start by creating a custom Hibernate dialect, basing it on PostgisDialect, as we plan to use both PostGIS and JSON in our application. We need to override the `registerTypesAndFunctions` function:
+Let's start by creating a custom Hibernate dialect, basing it on `PostgisDialect`, as we plan to use both PostGIS and JSON in our application. We need to override the `registerTypesAndFunctions` function:
 
 ```java
 @Override
@@ -28,9 +28,9 @@ protected void registerTypesAndFunctions() {
 }
 ```
 
-When registering a column type, we inform Hibernate on how to handle instances where the target column is of type `jsonb`. The `JSONTypeDescriptor` class registers the SQL type name and the converters that translate between the database object and the domain object, which are known as binder and extractor. The process is relatively simple, as JSONB is received as a `PGobject` which is simply a tagged string.
+When registering a column type, we inform Hibernate on how to handle instances where the target column is of type `jsonb`. The `JSONTypeDescriptor` class registers the SQL type name and the converters that translate between the database object and the domain object, which are known as "binder" and "extractor". The process is relatively simple, as JSONB is received as a `PGobject` which is simply a tagged string.
 
-By registering a function, we are able to use functions such as jsonb_extract_path_text in our code. The `StandardSQLFunction` class is utilized to explain how to translate the standard form of `f(x, y, ...)` into plain SQL. This process is also relatively straightforward.
+By registering a function, we are able to use that function, such as `jsonb_extract_path_text`, in our code. The `StandardSQLFunction` class is utilized to explain how to translate the standard form of `f(x, y, ...)` into plain SQL. This process is also relatively straightforward.
 
 However, just having a JSON string is only half of the solution. We also need to translate between domain objects and JSON strings. To accomplish this, we use the Jackson library for its powerful data binding capabilities:
 
