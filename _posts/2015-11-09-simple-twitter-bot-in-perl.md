@@ -4,7 +4,7 @@ title: Simple twitter bot in Perl
 tags: perl twitter
 ---
 
-are you looking for a fun project to try out? How about creating a twitter bot that publishes flashcards with Indonesian and English words? And let's make it even more fun by setting it to run once an hour.
+Are you looking for a fun project to try out? How about creating a twitter bot that publishes flashcards with Indonesian and English words? And let's make it even more fun by setting it to run once an hour.
 
 First things first, let's gather a list of the most commonly used words in Indonesian, you can find it on sites like [101languages](http://www.101languages.net/indonesian/most-common-indonesian-words/). Once you have the list, it should look something like this:
 
@@ -16,7 +16,7 @@ First things first, let's gather a list of the most commonly used words in Indon
     anda    you
     ada     exist
 
-Next step is to register for a twitter app, you can do that by heading over to their [website](https://apps.twitter.com/). The complete code for the bot is just a few lines of Perl. Trust me, there's nothing better than Perl for this kind of quick and easy hacking.
+Next step is to register for a twitter app, you can do that by heading over to their [website](https://apps.twitter.com/). The complete code for the bot is just a few lines of Perl. 
 
 The code looks something like this:
 
