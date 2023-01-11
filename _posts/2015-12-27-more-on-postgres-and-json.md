@@ -4,20 +4,20 @@ title: Working with JSON in Postgres 9.5
 tags: postgresql
 ---
 
-Let's start with installing docker, which is a very convenient tool for the cases where you just want to try out new software. For example, you can have multiple versions of Postgres running on your computer, which you can install, suspend or delete completely without any trace with just a few commands. The installation command looks like following:
+Docker is an incredibly useful tool that allows for easy experimentation with new software. It enables the simultaneous installation, suspension, and deletion of multiple versions of programs, such as Postgres, with minimal effort. The installation process is as simple as executing the following command:
 
 ```bash
 sudo apt-get install docker.io
 sudo docker run --name postgres -e POSTGRES_PASSWORD=postgres -d postgres:9.5
 ```
 
-Now open an Postgres' interactive shell by executing
+Once Docker is installed, you can access an interactive Postgres shell by executing the following command:
 
 ```bash
 sudo docker exec -it postgres psql -U postgres
 ```
 
-You are in, so we can start with exploring new JSON functionality available in Postgres 9.5. Let's create two tables: `devices` and `observations`.
+With this tool, we can now delve into the new JSON functionality available in Postgres 9.5. We will begin by creating two tables, devices and observations, and adding some data to them:
 
 ```sql
 CREATE TABLE sensors (
@@ -34,7 +34,7 @@ INSERT INTO sensors (id, type, config)
             (3, 'humidity', '{ "enabled": false, "height": 1.34, "device": { "version": "3.4", "supported": true } }');
 ```
 
-Let's enable the humidity sensor
+We can then enable the humidity sensor:
 
 ```sql
 UPDATE sensors
@@ -42,7 +42,7 @@ UPDATE sensors
  WHERE id = 3;
 ```
 
-And let's remove the `alpha` and the `beta` parameters used for soid moisture calibration
+Remove the `alpha` and the `beta` parameters used for soil moisture calibration:
 
 ```sql
 UPDATE sensors
@@ -50,13 +50,14 @@ UPDATE sensors
  WHERE type = 'soil-moisture';
 ```
 
-And now let's remove the supported tag from all `device` sections
+And now let's remove the supported tag from all device sections:
+
 ```sql
 UPDATE sensors
    SET config = config #- '{device,supported}';
 ```
 
-Let's fetch the device version information wherever it's available
+Fetch the device version information wherever it's available:
 
 ```sql
 WITH versioning AS (
@@ -68,7 +69,7 @@ SELECT *
  WHERE version IS NOT NULL;
 ```
 
-Find all the sensors where the `depth` is specified
+Find all the sensors where the depth is specified:
 
 ```sql
 SELECT *
@@ -76,7 +77,7 @@ SELECT *
  WHERE config ? 'depth';
 ```
 
-Let's find all properly placed sensors, where either the `depth` or the `height` are specified, but not both
+Let's find all properly placed sensors, where either the `depth` or the `height` are specified, but not both:
 
 ```sql
 SELECT *
@@ -85,4 +86,5 @@ SELECT *
    AND NOT config ?& array['depth', 'height'];
 ```
 
-You can read more on JSON functionality in Postgres 9.5 in the [official documentation](http://www.postgresql.org/docs/9.5/static/functions-json.html)
+For further reading on the JSON functionality available in Postgres 9.5, I recommend consulting the [official documentation](http://www.postgresql.org/docs/9.5/static/functions-json.html).
+

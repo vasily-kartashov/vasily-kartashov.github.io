@@ -4,32 +4,33 @@ title: PostGIS for very impatient
 tags: postgresql postgis
 ---
 
-As you may know, PostGIS is a PotgreSQL extension for working with spatial data, such as points, lines nad polygons.8
-Let's start with pulling a docker image with PostGIS already install, which almost always the most confortable option
+PostGIS is a powerful PostgreSQL extension designed to work with spatial data, including points, lines, and polygons. To begin experimenting with this extension, it is often easiest to pull a Docker image with PostGIS already installed. The following command can be used to do so:
+
+
 
     sudo apt-get install docker.io
     sudo docker run --name postgis -e POSTGRES_PASSWORD=postgis -d mdillon/postgis:9.4
 
-Login to the `psql` console
+Once the image is pulled, you can access the `psql` console by executing:
 
     sudo docker exec -it postgis psql -U postgres
 
-and in the prompt execute the following command to check the version of the PostgreSQL / PostGIS
+At the prompt, you can check the version of PostgreSQL/PostGIS by running the following command:
 
 ```sql
 SELECT version();
 SELECT postgis_full_version();
 ```
 
-Docker runs in the container so you'll need the IP address if you want to access PostgeSQL running in the container
+As Docker runs the database in a container, you will need the IP address if you wish to access PostgreSQL from outside the container. The following command can be used to retrieve the IP address:
 
     sudo docker inspect postgis | grep IPAddress
 
-Now we have a connection string and can use `pgcli` to access the database, which is a much nicer user interface that `psql`.
+ou can also use `pgcli`, a user-friendly cli tool, to access the database:
 
     pgcli -h 172.17.0.2 -U postgres
 
-Let's create a simple spring boot project to play around with queries. The source can be found on [GitHub](https://github.com/vasily-kartashov/postgis-spring-data-jpa-example)
+To further explore the capabilities of PostGIS, we can create a simple Spring Boot project. The source code for this project can be found on [GitHub](https://github.com/vasily-kartashov/postgis-spring-data-jpa-example)
 
 Initliaze the application
 
@@ -40,7 +41,7 @@ Initliaze the application
     spring.datasource.url = jdbc:postgresql://172.17.0.1:5432/postgres?user=postgres&password=postgis
     spring.datasource.driver-class-name = org.postgresql.Driver
 
-The device entity pretty much just concerns with the location of the device
+In this example, we will use a device entity that concerns itself primarily with the location of the device:
 
 ```java
 @Entity
@@ -58,9 +59,9 @@ public class Device {
 }
 ```
 
-Important is to define the custom type for the location attribute. This way Hibernate links Java geometry types and the SQL geometry type (??? is it true ???)
+It is essential to define a custom type for the location attribute, so that Hibernate can link Java geometry types with SQL geometry types.
 
-The hibernate dialect exposes PostGIS functions to JPQL and lets us to send queries like following
+The Hibernate dialect allows us to send queries like the following through JPQL:
 
 ```java
 public interface DeviceRepository extends CrudRepository<Device, String> {
@@ -71,8 +72,6 @@ public interface DeviceRepository extends CrudRepository<Device, String> {
 ```
 
 You can take a pick at the class `org.hibernate.spatial.dialect.postgis.PostgisDialect` to see what functions are available on JPQL side and how they map to PostGIS functions
-
-... - todo list them all?
 
 Now we can test the search functionality
 
@@ -88,7 +87,3 @@ List<Device> devices = deviceRepository.findWithinPolygon(polygon);
 
 System.out.println(devices);
 ```
-
-@todo extend with other functions
-@todo proper GIS data types
-@todo convertes to make it more domain specific

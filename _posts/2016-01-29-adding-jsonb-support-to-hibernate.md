@@ -4,16 +4,19 @@ title: Adding JSONB support to Hibernate
 tags: hibernate postgresql
 ---
 
-While `@Converter`s are convenient to translate JSON objects to and from domain objects, there is an important limitation to this approach.
-It is the fact that you cannot use any of the JSON functionalities in your JPQL queries and so you resorted to use native SQL queries.
+As you may be aware, the use of @Converters allows for the seamless translation of JSON objects to and from domain objects. However, there is a limitation to this approach in that it prohibits the use of JSON functionalities in JPQL queries, forcing one to rely solely on native SQL queries. To overcome this limitation, a custom Hibernate dialect that supports JSONB type and functions can be implemented, thereby exposing them to the JPQL level.
 
-One way to solve this problem is to write your custom Hibernate dialect, that supports JSONB type and functions and exposes them to the JPQL level.
-You can see the source code for the following note on [GitHub](https://github.com/vasily-kartashov/postgis-spring-data-jpa-example/commit/8e2409def78b611bcb3d18d070e36ab65c61443f)
+To accomplish this, we can create a custom Hibernate dialect that is based on PostgisDialect, as we plan to incorporate both PostGIS and JSON in our application. This can be achieved by overriding the `registerTypesAndFunctions` function. The source code for this implementation can be found on [GitHub](https://github.com/vasily-kartashov/postgis-spring-data-jpa-example/commit/8e2409def78b611bcb3d18d070e36ab65c61443f).
 
-We start with a short explanation of what we're trying to achieve. Firstly, we would love to be able to have custom types backed by JSON to be available in the JPA entities.
-Secondly, we want to be able to use `jsonb_*` functions in our JPLQ queries. Thirdly, adding a new type mapped to a JSONB column should be at most few lines of code.
+Our objective is to achieve three key goals:
 
-Let's start with a custom Hibernate dialect. I will base it on PostgisDialect, as I plan to use both PostGIS and JSON in my application. We need to override a function `registerTypesAndFunctions`.
+* the ability to have custom types backed by JSON to be available in JPA entities
+* the ability to utilize `jsonb_*` functions in JPLQ queries
+* the ability to easily add new types mapped to JSONB columns with minimal coding.
+
+By creating a custom Hibernate dialect, we can accomplish these goals, making our development process more efficient and streamlined.
+
+Let's start by creating a custom Hibernate dialect, basing it on PostgisDialect, as we plan to use both PostGIS and JSON in our application. We need to override the `registerTypesAndFunctions` function:
 
 ```java
 @Override
@@ -25,14 +28,11 @@ protected void registerTypesAndFunctions() {
 }
 ```
 
-Registering column type means that we explain to Hibernate how to deal with the situation when the database says that the target column is of type `jsonb`.
-The class `JSONTypeDescriptor` registers the name of the SQL type, and the convertes from and to database object, which are called `binder` and `extractor`.
-The code is rather trivial and is based on the fact that JSONB arrives as a `PGobject` which is just a tagged string.
+When registering a column type, we inform Hibernate on how to handle instances where the target column is of type `jsonb`. The `JSONTypeDescriptor` class registers the SQL type name and the converters that translate between the database object and the domain object, which are known as binder and extractor. The process is relatively simple, as JSONB is received as a `PGobject` which is simply a tagged string.
 
-Registering function means that we want to be able to use a function called `jsonb_extract_path_text` in our code, and the fact that it has a standard form of
-`f(x, y, ...)` we use class `StandardSQLFunction` to explain how to translate it into the plain SQL. Also rather trivial.
+By registering a function, we are able to use functions such as jsonb_extract_path_text in our code. The `StandardSQLFunction` class is utilized to explain how to translate the standard form of `f(x, y, ...)` into plain SQL. This process is also relatively straightforward.
 
-Having a JSON string is just half of the problem solved. We now need to translate between domain objects and JSON strings. We will use Jackson to do the heavy lifting for us
+However, just having a JSON string is only half of the solution. We also need to translate between domain objects and JSON strings. To accomplish this, we use the Jackson library for its powerful data binding capabilities:
 
 ```java
 public class JSONBackedTypeDescriptor<T> extends AbstractTypeDescriptor<T> {
@@ -95,13 +95,11 @@ public class JSONBackedTypeDescriptor<T> extends AbstractTypeDescriptor<T> {
 }
 ```
 
-The intricacies of wrapping and unwrapping escape me, so I just based my design on other custom types from PostGIS dialect.
-
-The next step is to chain the two converters together:
+To ensure seamless integration, it is essential to link our two converters together. 
 
     Domain Object <-- JavaTypeDescriptor --> String <-- SqlTypeDescriptor --> JSONP
 
-We create an abstract class that chains two descriptors together:
+This includes creating a connection between the domain object, the `JavaTypeDescriptor`, the string representation, the `SqlTypeDescriptor`, and finally, the JSONP format. By creating an abstract class that facilitates this connection, we can ensure a smooth integration process:
 
 ```java
 public abstract class JSONBackedType<T> extends AbstractSingleColumnStandardBasicType<T> {
@@ -122,7 +120,7 @@ public abstract class JSONBackedType<T> extends AbstractSingleColumnStandardBasi
 }
 ```
 
-This is all the non-domain specific code that we need. We can now proceed with our entities and repositories. Let's define a `Device` entity
+With all the necessary non-domain specific code in place, we can now proceed to create our entities and repositories. Let's take a look at our `Device` entity, defined as follows:
 
 ```java
 @Entity
@@ -144,7 +142,7 @@ public class Device {
 }
 ```
 
-And an embedded `Status` object
+The `Device` entity is accompanied by an embedded `Status` object, which is defined as follows:
 
 ```java
 public class Status {
@@ -157,7 +155,7 @@ public class Status {
 }
 ```
 
-And now let's define the `StatusType` that would bind the Java and SQL type descriptors
+To link the Java and SQL type descriptors, we have defined the `StatusType` class, which extends the `JSONBackedType` class:
 
 ```java
 public class StatusType extends JSONBackedType<Status> {
@@ -171,7 +169,7 @@ public class StatusType extends JSONBackedType<Status> {
 }
 ```
 
-So now we can start using JSONB in our queries. For example we can easily find all the devices with state of charge greater than 10%
+With our custom Hibernate dialect in place, we can now seamlessly integrate JSONB functionality into our JPQL queries. For instance, we can easily retrieve all devices with a state of charge greater than 10% by utilizing the following query within our `DeviceRepository` interface:
 
 ```java
 public interface DeviceRepository extends CrudRepository<Device, String> {
@@ -183,7 +181,7 @@ public interface DeviceRepository extends CrudRepository<Device, String> {
 }
 ```
 
-The JPQL query will be tranlated in the following SQL query
+This JPQL query will be translated into the following SQL query:
 
 ```sql
 select device0_.id as id1_0_,
@@ -193,4 +191,4 @@ select device0_.id as id1_0_,
  where cast(jsonb_extract_path_text(device0_.status, 'stateOfCharge') as float4) > 0.1
 ```
 
-Which is pretty much what I wanted in the first place.
+This implementation effectively achieves our goal of integrating JSONB functionality into our JPQL queries, allowing for easy and efficient data retrieval from our devices.
