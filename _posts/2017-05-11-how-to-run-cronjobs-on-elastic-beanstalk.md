@@ -4,11 +4,11 @@ title: How to Run Cronjobs on Elastic Beanstalk
 tags: aws php elastic-beanstalk
 ---
 
-Although Elastic Beanstalk has a nice option of specifiying a cron tasks and make them run on leader instance it doesn't always work. For example the leader might be terminated which shouldn't be an issue within an autoscaling environment, but with a teminated leader all your cron tasks are effectively suspended till next redeployment.
+Elastic Beanstalk offers a convenient option for specifying cron tasks and running them on the leader instance, but there can be issues with this approach. For example, if the leader instance is terminated, your cron tasks will be suspended until the next deployment.
 
-One way to address it is to run cronjobs on every instance but leave early if the current instance is not the "first" in the autoscaling group. There are many possible ways to define what "first" should mean in this case. One option for example is to sort instance IDs alphabetically.
+To avoid this issue, you can run cron jobs on every instance but have them exit early if the current instance is not the "first" in the autoscaling group. There are different ways to define what "first" means in this context. One option is to sort instance IDs alphabetically.
 
-The following PHP snippet illustrates just that
+The following PHP snippet demonstrates how this can be achieved:
 
 ```php
 $client = new ElasticBeanstalkClient(...);
@@ -34,3 +34,5 @@ if ($currentId != $availableIds[0]) {
 ...
 
 ```
+
+This snippet first checks which instances are available, sorts the available instances by their ID alphabetically, and then compares the current instance's ID with the leader instance ID. If the current instance is not the leader, the script exits early, otherwise it continues to execute the cron job. This approach ensures that the cron jobs will run on every instance, thus preventing the suspension of cron jobs in case of leader instance termination.

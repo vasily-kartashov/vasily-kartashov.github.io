@@ -4,7 +4,7 @@ title: Result Set Processor
 tags: php
 ---
 
-Here's a well known dilemma. You would like to fetch data from a couple of tables. Do you a) join tables and get data in one go, but split and group and convert manually, or b) fetch only the data that you need at the moment and face N+1 kind of problems? Lets assume we have a list of `controllers` were each has a set of `sensors` attached. The result should look something like
+When it comes to fetching data from a database, there's often a dilemma of whether to join tables and retrieve all the data in one go, or fetch only the necessary data for the moment and risk N+1 query problems. Let's assume we have a list of controllers, each with a set of sensors attached. The result should look something like:
 
 ```
 [
@@ -24,7 +24,7 @@ Here's a well known dilemma. You would like to fetch data from a couple of table
 ]
 ```
 
-And here are the both solutions. Do you go with
+One solution is to use the following SQL query:
 
 ```
 SELECT controllers.id AS controller_id,
@@ -43,7 +43,7 @@ foreach ($tupes as $tuple) {
 }
 ```
 
-or
+However, this can become tedious and complex for more advanced use cases. Another solution is to use a foreach loop and fetch data for each controller individually:
 
 ```
 foreach (SELECT controllers.id FROM controllers => $id) {
@@ -52,11 +52,11 @@ foreach (SELECT controllers.id FROM controllers => $id) {
 
 ```
 
-First solution although idiomatic is also tedious and can blow up for more complex use cases. The second one has body of literature dedicated to it, which is never a good sign.
+This second solution also has its downsides and can lead to N+1 query problems.
 
-The rest of the exposition is in PHP. Bear with me.
+In this article, the author presents a way to address this dilemma in PHP by using the concept of processing contexts. The basic idea is to define a `ProcessingContext` class that keeps track of a set of records and provides methods for manipulating and extracting those records.
 
-The job of processing result sets is actually an interesting domain. The underlying data structure is a set of records.
+The job of processing result sets is a fascinating area to explore. The core data structure is a set of records:
 
 ```
 abstract class ProcessingContext
@@ -65,7 +65,7 @@ abstract class ProcessingContext
 }
 ```
 
-If there are no information about the structure of these records, then the only two meaningful operations for this kind of context are `collectAll` and `collectHead`. I'll call this context `Collector`
+When there is no information about the structure of these records, the only meaningful operations for this context are `collectAll` and `collectHead`. This context can be called a `Collector`:
 
 ```
 class Collector extends ProcessingContext
@@ -77,7 +77,7 @@ class Collector extends ProcessingContext
 }
 ```
 
-As we now know that the `$records` are associative arrays, we can do more interesting things with them. But whatever we have in mind with this records it should always start with picking a subset from each record for further processing. So the next context is going to be a Selector. Whilst knowing that `records` are associative arrays helps us with adding more operations the the context, we still can do what `Collector` does, i.e. `collectHead` and `collectAll`, therefore:
+Once we know that the $records are associative arrays, we can do more interesting things with them. However, whatever we want to do with these records, it should always start with picking a subset of each record for further processing. The next context is the `Selector`. Even though knowing that the records are associative arrays allows us to add more operations to the context, we can still do what the `Collector` does i.e. `collectHead` and `collectAll`:
 
 ```
 class Selector extends Collector
@@ -90,7 +90,7 @@ class Selector extends Collector
 }
 ```
 
-What is a `Converter` or a `MapConverter`? A selector lets you pick fields from each record and place them in some sort of a structure. For example `selectValue` let's you pick a value of a field and store it as a scalar, `selectFields` let's you fetch an embedded associative array (subrecord if you wish) from each record, and `map` lets you create a new kay/value pair from values of two fields. The `Converter` is the context in which the API user needs to decide what to do with the selected subrecord.
+What is a `Converter` or a `MapConverter`? A selector allows you to pick fields from each record and place them in some sort of structure. For example, `selectValue` lets you pick a value of a field and store it as a scalar, `selectFields` lets you fetch an embedded associative array from each record, and map lets you create a new key/value pair from the values of two fields. The `Converter` is the context in which the API user must decide what to do with the selected subrecord.
 
 ```
 class Converter extends ProcessingContext
@@ -114,9 +114,9 @@ class MapConverter extends Converter
 }
 ```
 
-So method `name` returns the subrecord back into the record it was extracted from under a new name. Method `group` groups subrecords by using the remainder of each record as a group key. It doesn't return the group back into the record, so the result of `group` is actually a collector, i.e. the records are the groups extracted by selector. The `groupInto` on the other side not only groups subrecords, but also pushes the groups back into the record.
+So the `name` method returns the subrecord back into the record it was extracted from under a new name. The `group` method groups subrecords by using the remainder of each record as a group key. It does not return the group back into the record, so the result of `group` is actually a collector, i.e. the records are the groups extracted by the selector. The `groupInto` method not only groups subrecords but also pushes the groups back into the record.
 
-At this point I expect the reader to lose all interest. Here is how I would split the example join above
+I understand that the example provided may be complex and difficult to follow. Here is how I would simplify the example join above:
 
 ```
 $query = "
@@ -133,7 +133,7 @@ $procedure->processAll()
     ->collectAll();
 ```
 
-So the records look like following. Firstly we get the rows extracted
+The records would look like this:
 
 ```
 | id   | sensor_id | sensor_active |
@@ -142,7 +142,7 @@ So the records look like following. Firstly we get the rows extracted
 | c002 | s001      | false         |
 ```
 
-After we select by prefix and group into a record `sensors`
+Then, we select by prefix and group them into a record called sensors:
 
 ```
 | id   | sensors                       |
@@ -151,4 +151,4 @@ After we select by prefix and group into a record `sensors`
 | c002 | [{ id: s001, active: false }] |
 ```
 
-That is literally all. You can take a look at the [example imeplementation](https://github.com/vasily-kartashov/hamlet-core/tree/version-2.1/src/Hamlet/Database/Processing) and some [unit tests](https://github.com/vasily-kartashov/hamlet-core/blob/version-2.1/tests/Hamlet/Database/ProcessorTest.php).
+And that's it! If you'd like oto see a working example, you can check out the [example imeplementation](https://github.com/vasily-kartashov/hamlet-core/tree/version-2.1/src/Hamlet/Database/Processing) and some [unit tests](https://github.com/vasily-kartashov/hamlet-core/blob/version-2.1/tests/Hamlet/Database/ProcessorTest.php) for further reference.

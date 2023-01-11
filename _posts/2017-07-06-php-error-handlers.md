@@ -4,14 +4,14 @@ title: PHP Global Error Handler
 tags: php
 ---
 
-What do we do with uncaught `Throwable`s in PHP 7? Following things come to mind:
+When it comes to handling uncaught `Throwables` in PHP 7, there are a few things to consider:
 
-- Ideally we would like only one handler defined
-- The handler should be stateful, i.e. we should be able to capture something like `LoggerInterface` in it
-- The additional handler should't hide code location, i.e. in logs we should not see the file and line of the handler, but the previous hop in the stack trace
-- Registration of handlers should be trivial
+- It's best to have only one handler defined
+- The handler should be stateful, meaning it should be able to capture something like a `LoggerInterface`
+- The additional handler shouldn't hide the code location, meaning that in logs, we should see the file and line of the previous hop in the stack trace, not the handler's
+- Registering handlers should be simple and straightforward
 
-One implementation that satisfies these criteria is the following. For an error handler we get
+Here's an example of an implementation that meets these criteria:
 
 ```
 class ErrorHandler implements GenericHandler
@@ -41,7 +41,7 @@ class ErrorHandler implements GenericHandler
 }
 ```
 
-For an exception handler
+And here's an example of an exception handler:
 
 ```
 class ExceptionHandler implements GenericHandler
@@ -64,15 +64,15 @@ class ExceptionHandler implements GenericHandler
 }
 ```
 
-And for the regisration
+And for the regisration:
 
 ```
 set_error_handler(new ErrorHandler($logger), E_ALL);
 set_exception_handler(new ExceptionHandler($logger));
 ```
+In addition, to make this work, you will need to use [a fork of Log4Php](https://packagist.org/packages/vasily-kartashov/log4php), version 4.*, that:
 
-For this to work you'd also need [`Log4Php` fork](https://packagist.org/packages/vasily-kartashov/log4php), version `4.*`. The fork essentially:
-- adds namespaces,
-- implements `psr/log` interface,
-- accounts for new `Throwable` hierarchy change in PHP 7,
-- adds `GenericHandler` and `GenericLogger` marker interfaces used to skip additional logging layers in stack traces
+- includes namespaces,
+- implements the `psr/log` interface,
+- accounts for the new `Throwable` hierarchy change in PHP 7,
+- adds `GenericHandler` and `GenericLogger` marker interfaces that are used to skip additional logging layers in stack traces.
