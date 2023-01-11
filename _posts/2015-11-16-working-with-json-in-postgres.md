@@ -4,7 +4,7 @@ title: Working with JSON in PostgreSQL
 tags: postgresql
 ---
 
-The original table sensors looks like following
+The following table, referred to as "sensors", displays sensor data in the format of an `id`, `location`, and `status`. The `status` field is in the form of a JSON object.
 
     +------+------------+---------------------------------------+
     |   id | location   | status                                |
@@ -16,7 +16,7 @@ The original table sensors looks like following
     |      |            |  "errorCode": 78}                     |
     +------+------------+---------------------------------------+
 
-Let's find all possible status fields
+We can extract a list of all possible status fields with the following query:
 
 ```sql
 SELECT DISTINCT json_object_keys(status) AS status_field
@@ -24,7 +24,7 @@ SELECT DISTINCT json_object_keys(status) AS status_field
        ORDER BY status_field;
 ```
 
-gives us the following list
+which produces the following result:
 
     +----------------+
     | status_field   |
@@ -34,14 +34,14 @@ gives us the following list
     | temperture     |
     +----------------+
 
-Now let's find the highest temperature read by a unit
+To determine the highest temperature recorded by any sensor, we can use the following query:
 
 ```sql
-SELECT MAX((status->>'temperture')::text)
+SELECT MAX((status->>'temperature')::text)
   FROM sensors;
 ```
 
-give us
+This query returns:
 
     +-------+
     |   max |
@@ -50,7 +50,7 @@ give us
     +-------+
 
 
-What if we want to know the highest temperature measured by a healthy unit?
+However, if we wish to determine the highest temperature recorded by only healthy sensors, we can use the following query:
 
 ```sql
 SELECT MAX((status->>'temperture')::text)
@@ -58,7 +58,7 @@ SELECT MAX((status->>'temperture')::text)
  WHERE (status->>'healthy')::bool
 ```
 
-produces a different picture
+which produces the following result:
 
     +-------+
     |   max |
@@ -66,7 +66,7 @@ produces a different picture
     |  28.1 |
     +-------+
 
-Get the average temperature from the healthy sensors grouped by location
+Additionally, we can retrieve the average temperature of healthy sensors grouped by location with the following query:
 
 ```sql
 SELECT location,
@@ -76,7 +76,7 @@ SELECT location,
  GROUP BY location;
 ```
 
-Gives you this very short list
+which produces the following result:
 
     +------------+---------------+
     | location   |   temperature |
@@ -84,7 +84,7 @@ Gives you this very short list
     | unknown    |          28.1 |
     +------------+---------------+
 
-Let's unwrap the key value store from status into a bigger table. The unfolding operations such as `json_each`, `json_each_text` and so on produce sets of records. In our first iteration let's fetch the packed records.
+We can further expand upon this data by using the functions `json_each`, `json_each_text`, and so on, to expand the JSON status object into a larger table. So in our next iteration, we can use the following SQL query to fetch the packed records:
 
 ```sql
 SELECT id,
@@ -92,7 +92,7 @@ SELECT id,
   FROM sensors;
 ```
 
-which gives us the following table
+This query returns:
 
     +------+-------------------+
     |   id | json_each_text    |
@@ -108,7 +108,7 @@ which gives us the following table
     |    4 | (errorCode,78)    |
     +------+-------------------+
 
-And now let's unfold the `status_field` record
+We will then proceed to unfold the `status_field` record through the following query:
 
 ```sql
 SELECT id,
@@ -119,7 +119,7 @@ SELECT id,
           FROM sensors) AS statuses;
 ```
 
-Which gives us the following table
+This will yield the following table:
 
     +------+------------+---------+
     |   id | key        | value   |
@@ -135,7 +135,6 @@ Which gives us the following table
     |    4 | errorCode  | 78      |
     +------+------------+---------+
 
-Here's the relevant documentation from Postgres website regarding the composite types: http://www.postgresql.org/docs/9.4/static/rowtypes.html.
 Note that the third column has a type of text.
 
 ```sql
@@ -154,6 +153,6 @@ Which gives us
     | text       | text         |
     +------------+--------------+
 
-When using `json_each` the `value_type` whould be `json` and not `text` which is important as this means data type information (as scarse it is in JSON) is not completely lost by casting it to text.
+It is important to note that when using json_each, the value_type should be json and not text. This is significant because it preserves the data type information (as limited as it may be in JSON) as opposed to casting it to text.
 
-Last but not least: it was a hugely beneficial to use `pgcli` while experimenting with Postgres.
+Additionally, it is worth mentioning that utilizing the pgcli tool while experimenting with Postgres proved to be extremely beneficial. Further information regarding composite types can be found in the Postgres documentation: http://www.postgresql.org/docs/9.4/static/rowtypes.html
