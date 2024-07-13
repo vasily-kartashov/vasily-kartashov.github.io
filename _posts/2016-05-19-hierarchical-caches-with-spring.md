@@ -1,12 +1,16 @@
 ---
 layout: post
-title: Hierarchical caches with Spring
+title: Optimizing Database Performance with Hierarchical Caching in Spring
 tags: java spring
 ---
 
-This article provides a solution to optimize the performance of a large database by using memoization and caching techniques in the `Database` and `Integrator` services. The goal is to reduce the stress on the database by providing read-only access to the data and perform calculations on this data. In this solution, you will use a range of Spring caching tools to achieve these goals.
+In large-scale applications, optimizing database performance is crucial. This article presents a sophisticated approach to enhancing read-only access and calculation efficiency using Spring's caching mechanisms. We'll explore how to implement a hierarchical caching strategy that significantly reduces database load and improves overall system performance.
 
-To start, you create a simple class called `Database` that loads a time series for you:
+## The Challenge
+
+Consider a system with two primary components:
+
+1. A Database class that retrieves time series data:
 
 ```java
 public class Database {
@@ -16,7 +20,7 @@ public class Database {
 }
 ```
 
-You also create a class `Integrator` that uses this database to calculate the sum of the time series, producing an integral:
+2. An Integrator class that performs calculations on this data:
 
 ```java
 public class Integrator {
@@ -36,71 +40,88 @@ public class Integrator {
 }
 ```
 
-However, this design has some drawbacks; if a new data point is added to the time series in the database, the entire time series must be retrieved again. Even if there is no new data, if we request the integrated time series, the original time series will still be loaded and the calculation will be performed.
+This basic implementation has several inefficiencies:
 
-One solution to this problem is to use memoization, but because this is a stateful system, our caching strategy cannot be overly simplistic. To address these issues, we will use a range of Spring caching tools.
+- It reloads the entire time series when new data is added.
+- It recalculates the integral even when the underlying data hasn't changed.
 
-We will begin by adding caching to the `Database` and `Integrator` services:
+## The Solution: Hierarchical Caching
+
+To address these issues, we'll implement a multi-layered caching strategy using Spring's caching annotations.
+
+### Step 1: Basic Caching
+
+First, we'll add caching to both the Database and Integrator classes:
 
 ```java
-public class Integrator {
-
-    ...
-
-    @Cacheable(cacheNames = "integral", key = "#series")
-    public double[] run(String series) {
-        ...
+public class Database {
+    @Cacheable(cacheNames = "nominal", key = "#series")
+    public double[] load(String series) {
+        // Implementation
     }
 }
 
-public class Database {
-
-    ...
-
-    @Cacheable(cacheNames = "nominal", key = "#series")
-    public double[] load(String series) {
-        ...
+public class Integrator {
+    @Cacheable(cacheNames = "integral", key = "#series")
+    public double[] run(String series) {
+        // Implementation
     }
 }
 ```
 
-We have made progress by memoizing and caching everything, but next step is crucial. We need to coordinate cache eviction with the arrival of new data. To achieve this, we will introduce a new abstraction called a `Repository`:
+### Step 2: Coordinated Cache Management
+
+To maintain cache consistency when new data arrives, we introduce a Repository class:
 
 ```java
 public class Repository {
-
-    ...
-
     private Database database;
 
     @Caching(
-            evict = @CacheEvict(value = "integral", key = "#series"),
-            put = @CachePut(value = "nominal", key = "#series")
+        evict = @CacheEvict(value = "integral", key = "#series"),
+        put = @CachePut(value = "nominal", key = "#series")
     )
     public double[] update(String series, double value) {
-        double[] e = database.load(series);
-        double[] d = new double[e.length + 1];
-        System.arraycopy(e, 0, d, 0, e.length);
-        d[e.length] = value;
-        return d;
+        double[] existing = database.load(series);
+        double[] updated = new double[existing.length + 1];
+        System.arraycopy(existing, 0, updated, 0, existing.length);
+        updated[existing.length] = value;
+        return updated;
     }
 
     @Caching(evict = {
-            @CacheEvict(value = "nominal", key = "#secret"),
-            @CacheEvict(value = "integral", key = "#secret")
+        @CacheEvict(value = "nominal", key = "#series"),
+        @CacheEvict(value = "integral", key = "#series")
     })
     public void reset(String series) {
+        // Cache reset logic
     }
 }
 ```
 
-When it comes to this design, there are a few subtle details to keep in mind. The `update` method, for example, doesn't update the database directly. Instead, it:
+## Key Design Considerations
 
-- Retrieves the value from the "nominal" cache or the database by executing `database.load()`
-- Adds a value to the end of the loaded series
-- Stores the updated series in the "nominal" cache using the `@CachePut` annotation
-- Clears the "integral" cache for the updated series using the `@CacheEvict` annotation
+### Update Mechanism
 
-Additionally, the `reset` method does not access the database at all. It simply resets both the "nominal" and "integral" caches using annotations.
+The update method in Repository manages cache updates efficiently:
+- _Retrieves existing data_: It fetches the current time series from the "nominal" cache or database. Example: If the series `AAPL` contains `[100, 101, 102]`, it retrieves this array.
+- _Appends a new value_: It creates a new array with the existing data plus the new value at the end. Example: If updating AAPL` with `103`, the new array becomes `[100, 101, 102, 103]`.
+- _Updates the "nominal" cache_: It stores the new array in the cache, replacing the old one. Example: The "nominal" cache for `AAPL` now contains `[100, 101, 102, 103]`.
+- _Invalidates the "integral" cache_: It removes the corresponding entry from the "integral" cache. Example: The cached integral for `AAPL` is deleted, forcing recalculation on next access.
 
-It's worth noting that this approach may seem complex at first glance, but it becomes more practical when there are multiple hierarchical calculations that need to be run on the data. By specifying functional dependencies in the Java code and caching policies in the annotations, the concerns are separated and the code becomes more reusable and testable.
+### Cache Reset
+
+The reset method provides a way to clear cached data:
+- _Clears both caches_: It removes entries from both "nominal" and "integral" caches for a given series. Example: Calling `reset("AAPL")` removes `AAPL` data from both caches.
+- _No database interaction_: It only affects the caches, not the underlying database. Example: After reset, the next data request will trigger a fresh database load.
+
+### Separation of Concerns: This design separates different aspects of the system:
+
+- _Functional dependencies in Java code_: The actual data processing logic is in the Java methods. Example: The integration calculation in the Integrator class.
+- _Caching policies in annotations_: Cache behavior is defined using Spring annotations. Example: `@Cacheable(cacheNames = "integral", key = "#series")` on the `Integrator.run()` method.
+
+## Conclusion
+
+While this hierarchical caching approach may seem complex initially, it proves highly effective in systems with multiple interdependent calculations. By leveraging Spring's caching annotations, we can significantly reduce database load, improve response times, and create a more scalable architecture.
+
+This strategy is particularly valuable in read-heavy systems where data updates are less frequent than read operations. It allows for efficient data access and computation while maintaining data consistency across the caching layers.

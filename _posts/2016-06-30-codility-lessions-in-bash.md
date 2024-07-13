@@ -4,7 +4,7 @@ title: Solving Codility exercises in shell script
 tags: shell
 ---
 
-How about today we try and solve Codility exercise problems in one of the most "odd" languages? Bash! Never liked the syntax, type system is horrendous, performance is abysmal, development is pretty much echo driven. Let's see if after today I will feel more confident about this language. I will write down all learnings and surprises.
+This article examines the process of solving Codility programming challenges using Bash scripting. While Bash may not be the most intuitive choice for algorithmic problems, it offers an interesting perspective on problem-solving and can help improve one's command of shell scripting.
 
 The [first exercise](https://codility.com/programmers/task/binary_gap/) is the binary gap. Main job is done by `bc` calculator. Take away from this is the horrible pattern for dealing with trailing characters
 

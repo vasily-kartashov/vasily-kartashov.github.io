@@ -1,21 +1,19 @@
 ---
 layout: post
-title: Using Spring request scoped beans for auditing
+title: Using Spring Request-Scoped Beans for Better Auditing
 tags: java spring aop
 ---
 
-Every multi-layerd application is built on idea of separation of concerns. The presentational layer knows about raw JSON payload and HTTP headers, but the service layer would only know about the domain objects, whereas the
-underlying data access layer wouldn't even know about which business methods the current transaction is spanning.
+Multi-layered apps are all about keeping different parts separate. The front end deals with JSON and HTTP headers, the service layer works with business objects, and the data layer doesn't even know which business methods are running.
 
-So for this post let's assume that we want a tracing context during the whole execution. We want to timer all the methods in our controllers and see who sent the request. The approach is easily extensible, so we'll keep the example to bare minimum.
+In this post, we'll set up a simple way to track what's happening during a request. We'll time our controller methods and see who's making the request. This approach is easy to expand, but we'll keep it simple for now.
 
-Let's create a timer aspect that will count execution time
+First, let's make a timer that will count how long methods take:
 
 ```java
 @Aspect
 @Component
 public class Timer {
-
     @Autowired
     private Auditor auditor;
 
@@ -33,13 +31,11 @@ public class Timer {
 }
 ```
 
-Make sure the aspect is marked as `@Component` otherwise Spring will not pick it up. We also need to create an Auditor who would store the execution context for the duration of request.
+Make sure to mark it as `@Component` so Spring picks it up. We also need an Auditor to keep track of what's happening during the request:
 
 ```java
 public class Auditor {
-
     private final static Logger logger = LoggerFactory.getLogger(Auditor.class);
-
     private List<Record> records = new ArrayList<>();
     private String remoteAddress;
 
@@ -59,17 +55,16 @@ public class Auditor {
     }
 
     static class Record {
-        ...
+        // Details left out for brevity
     }
 }
 ```
 
-We also need to report remote address from our controllers. For the sake of exposition I will add remote address manually and not use AspectJ for this.
+We'll add the remote address in our controllers. Here's a simple example:
 
 ```java
 @RestController
 public class PingController {
-
     @Autowired
     private Auditor auditor;
 
@@ -81,18 +76,13 @@ public class PingController {
 }
 ```
 
-And the final thing we need to explain to our Spring boot application what we're up to:
-
-- Enable AspectJ proxies
-- Make Auditor request scoped
-- Make sure that Sprign autowires not the object but a scoped proxy that would create separate instances for every web request
+Lastly, we need to set up our Spring Boot app:
 
 ```java
 @SpringBootApplication
 @EnableAspectJAutoProxy
 @Configuration
 public class Application {
-
     public static void main(String... args) {
         SpringApplication.run(Application.class, args);
     }
@@ -105,10 +95,17 @@ public class Application {
 }
 ```
 
-We're all set. Running the application will give us the following trace
+This does three important things:
+
+- Turns on AspectJ proxies
+- Makes Auditor request-scoped
+- Tells Spring to use a special proxy that creates a new Auditor for each web request
+
+When you run the app, you'll see something like this:
 
 ```
 2016-06-17 13:23:49.440  INFO 6738 : Audit record. Request from 0:0:0:0:0:0:0:1
 PingController.ping(..): 24ms
 ```
-This approach can be further extended with factories that would produce different request scoped Auditors for different situations. Important point to take here is that by autowiring request scoped Auditors we are keeping cross-cutting auditing aspect mostly separate from our business logic.
+
+You can build on this idea to do more complex auditing. The key point is that by using request-scoped Auditors, we keep our auditing separate from our main business logic.

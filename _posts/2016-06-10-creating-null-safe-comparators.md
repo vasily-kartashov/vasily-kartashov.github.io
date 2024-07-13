@@ -1,10 +1,27 @@
 ---
 layout: post
-title: Creating null-safe comparators in Java
+title: Implementing Null-Safe Comparators in Java
 tags: java
 ---
 
-Sorting domain objects can be challenging because it may require significant effort to consider all edge cases and produce a robust sorting order that meets business requirements. For example, consider a client database where users are sorted first by city, then by zip code, then by last name, and finally by first name. If any of these properties are not set, we want to move the user to the end of the list. It may also be necessary to ignore the case when comparing cities. An example of a simple result set in tabulated form is shown below:
+## Introduction
+
+Sorting complex domain objects in Java can present challenges, particularly when considering multiple criteria and null values. This article explores an efficient approach to creating robust, null-safe comparators using Java 8 features.
+
+## Problem Statement
+
+Consider a scenario where users in a client database need to be sorted based on multiple criteria:
+
+- City (case-insensitive)
+- Zip code
+- Last name
+- First name
+
+Additionally, null values for any of these properties should be handled by moving the corresponding user to the end of the list.
+
+## Example Dataset
+
+To illustrate the sorting requirements, consider the following sample dataset:
 
     | Brisbane  | 4000 | Burke     | Jason   |
     | Brisbane  | null | Appleseed | Frank   |
@@ -12,7 +29,11 @@ Sorting domain objects can be challenging because it may require significant eff
     | Melbourne | 3003 | Collins   | Grant   |
     | null      | 1000 | null      | Matthew |
 
-The corresponding User class could look like this:
+This dataset demonstrates various scenarios, including case differences in city names, missing zip codes, and null values for both city and last name.
+
+## Sample Data Structure
+
+The User class might be structured as follows:
 
 ```java
 class User {
@@ -23,7 +44,9 @@ class User {
 }
 ```
 
-Although it's not an overly complex task, composing multiple comparators can be generalized. Here is a pseudo-code algorithm for this purpose:
+## Generalizing Comparator Composition
+
+The process of composing multiple comparators can be generalized using the following algorithm:
 
     result = 0
     for (comparator : comparators):
@@ -31,7 +54,9 @@ Although it's not an overly complex task, composing multiple comparators can be 
         if (result != 0):
             break
 
-Using the flexibility of Java 8, we can create a generic `ComparatorBuilder` to simplify this task, particularly in regards to null checks:
+## Implementing a Generic ComparatorBuilder
+
+Leveraging Java 8's functional interfaces, we can create a `ComparatorBuilder` class to simplify the creation of complex, `null`-safe comparators:
 
 ```java
 public class ComparatorBuilder<T> {
@@ -74,7 +99,9 @@ public class ComparatorBuilder<T> {
 }
 ```
 
-For example, we can create a comparator for the `User` class as follows:
+## Usage Example
+
+To create a comparator for the `User` class using the `ComparatorBuilder`:
 
 ```java
 Comparator<User> comparator = new ComparatorBuilder<User>()
@@ -86,4 +113,6 @@ Comparator<User> comparator = new ComparatorBuilder<User>()
 Collections.sort(users, comparator);
 ```
 
-Overall, this approach is quite neat compared to the alternatives.
+## Conclusion
+
+This approach provides a clean, flexible, and type-safe method for creating complex comparators in Java. It effectively handles `null` values and allows for easy composition of multiple sorting criteria. By utilizing Java 8 features, we can create more maintainable and readable code for sorting operations.
