@@ -6,7 +6,7 @@ highlighter:      rouge
 permalink:        pretty
 
 # Setup
-title:            Бортовой журнал
+title:            Заметки
 tagline:          'Random notes'
 description:      ''
 url:              http://notes.kartashov.com
@@ -14,7 +14,7 @@ baseurl:          ''
 
 author:
   name:           'Vasily Kartashov'
-  url:            https://twitter.com/__kartashov
+  url:            https://github.com/vasily-kartashov/vasily-kartashov.github.io
 
 paginate:         10
 
