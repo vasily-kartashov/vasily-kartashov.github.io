@@ -1,5 +1,2 @@
 source 'https://rubygems.org'
-gem 'therubyracer'
-gem 'github-pages'
-gem 'kramdown'
-gem 'rouge'
+gem 'github-pages', group: :jekyll_plugins
